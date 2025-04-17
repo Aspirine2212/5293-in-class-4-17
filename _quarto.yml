@@ -8,9 +8,9 @@ execute:
 book:
   title: "YOUR PROJECT TITLE"
   author:
-    - AUTHOR1 (UNI1)
+    - Hanzhong Yang (hy2870)
     - AUTHOR2 (UNI2)
-  repo-url: https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+  repo-url: https://aspirine2212.github.io/5293-in-class-4-17/
   date: today
   page-footer:
     right: |
