@@ -1,5 +1,236 @@
+---
+title: "data"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
 # Data
 
 ## Description
 
+This data set is related to camera. It includes certain features of the
+camera. There are 13 properties related to these camera, which are:
+Model, Release date, Max resolution, Low resolution, Effective pixels,
+Zoom wide (W), Zoom tele (T), Normal focus range, Macro focus range,
+Storage included Weight (inc. batteries), and Dimensions Price.\
+
+## load the dataset
+
+```{r}
+library(dplyr)
+library(tidyr)
+setwd("C:/Users/ASUS/Desktop/Spring 2025/5293")
+
+camera_data <- read.csv("camera_dataset.csv")
+
+quantitative_vars <- camera_data[, c("Max.resolution", "Low.resolution", "Effective.pixels", 
+                                     "Zoom.wide..W.", "Zoom.tele..T.", "Normal.focus.range", 
+                                     "Weight..inc..batteries.", "Price")]
+
+stats_summary <- quantitative_vars |>
+  summarise_all(list(
+    mean = ~mean(., na.rm = TRUE),
+    median = ~median(., na.rm = TRUE),
+    sd = ~sd(., na.rm = TRUE),
+    IQR = ~IQR(., na.rm = TRUE)
+  )) |>
+  pivot_longer(
+    everything(),
+    names_to = c("variable", "stat"),
+    names_sep = "_"
+  ) |>
+  pivot_wider(
+    names_from = variable,
+    values_from = value
+  )
+
+stats_summary
+
+```
+
+## handling the year and brand
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(stringr)
+
+#getting the group for year
+camera_data <- camera_data |>
+  mutate(Year.Group = case_when(
+    Release.date >= 1994 & Release.date <= 1997 ~ "1994-1997",
+    Release.date >= 1998 & Release.date <= 2001 ~ "1998-2001",
+    Release.date >= 2002 & Release.date <= 2005 ~ "2002-2005",
+    Release.date >= 2006 & Release.date <= 2007 ~ "2006-2007"
+  ))
+
+
+#get the brand for each model
+camera_data <- camera_data |>
+  mutate(brand = word(Model, 1))
+
+camera_data |>
+  count(brand, sort = TRUE)
+
+camera_data <- camera_data %>%
+  rename_with(~ gsub("\\.", "", .x)) %>%
+  rename(
+    ReleaseDate = Releasedate,
+    MaxResolution = Maxresolution,
+    LowResolution = Lowresolution,
+    EffectivePixels = Effectivepixels,
+    ZoomWide = ZoomwideW,
+    ZoomTele = ZoomteleT,
+    NormalFocus = Normalfocusrange,
+    MacroFocus = Macrofocusrange,
+    Weight = Weightincbatteries,
+    Storage = Storageincluded,
+    YearGroup = YearGroup,
+    Brand = brand
+  )
+
+```
+
 ## Missing value analysis
+
+```{r}
+library(dplyr)
+
+na_summary <- camera_data |>
+  summarise(across(everything(), ~sum(is.na(.)))) |>
+  pivot_longer(everything(), names_to = "variable", values_to = "na_count") |>
+  mutate(na_percent = round(na_count / nrow(camera_data) * 100, 2))
+
+na_summary
+
+```
+## Handling Missing Values
+```{r}
+library(missMDA)
+library(FactoMineR)
+
+vars_for_imputation <- camera_data %>%
+  select(where(is.numeric)) %>%
+  select(where(~ !all(is.na(.)))) %>%
+  select(where(~ sd(., na.rm = TRUE) > 0))
+
+# PCA
+nb_pc <- estim_ncpPCA(vars_for_imputation, method = "Regularized")$ncp
+imputed_data <- imputePCA(vars_for_imputation, ncp = nb_pc)
+filled_data <- imputed_data$completeObs
+
+
+camera_data_filled <- camera_data
+camera_data_filled[names(vars_for_imputation)] <- filled_data
+
+
+sum(is.na(camera_data_filled))
+
+```
+
+
+## Basic information
+```{r}
+library(dplyr)
+
+basic_stats <- camera_data_filled %>%
+  select(where(is.numeric)) %>%
+  summarise(across(everything(), list(
+    mean = ~mean(., na.rm = TRUE),
+    sd = ~sd(., na.rm = TRUE),
+    median = ~median(., na.rm = TRUE),
+    min = ~min(., na.rm = TRUE),
+    max = ~max(., na.rm = TRUE)
+  ), .names = "{.col}_{.fn}"))
+
+basic_stats_tidy <- basic_stats %>%
+  pivot_longer(everything(), names_to = c("variable", ".value"), names_sep = "_")
+
+basic_stats_tidy
+```
+
+##random Forest
+```{r}
+# 去掉 Model 列
+camera_data_rf <- camera_data_filled %>%
+  select(-Model)
+
+# 构建模型
+set.seed(123)
+rf_model <- randomForest(Price ~ ., data = camera_data_rf, importance = TRUE)
+
+# 提取变量重要性
+importance_df <- importance(rf_model) %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("Variable")
+
+# 画图
+library(ggplot2)
+ggplot(importance_df, aes(x = reorder(Variable, `%IncMSE`), y = `%IncMSE`)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Variable Importance from Random Forest (Model Excluded)",
+       x = "Variable", y = "% Increase in MSE") +
+  theme_minimal()
+
+#colnames(camera_data_rf)
+
+```
+
+##PDP plot single
+```{r}
+
+library(randomForest)
+library(iml)
+library(ggplot2)
+
+X <- camera_data_rf[, setdiff(names(camera_data_rf), "Price")]
+predictor <- Predictor$new(rf_model, data = X, y = camera_data_rf$Price)
+
+
+pdp_zoom <- FeatureEffect$new(predictor, feature = "ZoomTele", method = "pdp")
+
+
+plot(pdp_zoom) +
+  labs(
+    title = "Partial Dependence Plot: ZoomTele vs Price",
+    x = "Zoom Telephoto Range",
+    y = "Predicted Price"
+  ) +
+  theme_minimal(base_size = 13)
+
+pdp::partial(rf_model, pred.var = "LowResolution", train = camera_data_rf) %>% head()
+```
+
+##PDP plot all 
+```{r}
+library(pdp)
+library(ggplot2)
+library(purrr)
+library(dplyr)
+
+#camera_data_rf %>% summarise(across(all_of(vars), ~n_distinct(.)))
+
+vars <- c("ZoomTele", "Weight", "LowResolution", "MaxResolution", "Dimensions", "ReleaseDate", "ZoomWide", "EffectivePixels", "MacroFocus", "NormalFocus")
+
+df <- map(vars, function(varname) {
+  pd <- pdp::partial(
+    object = rf_model, 
+    pred.var = varname, 
+    train = camera_data_rf
+  )
+  pd <- pd %>% pivot_longer(cols = 1, names_to = "name", values_to = "value")
+  pd$name <- varname
+  return(pd)
+}) %>%
+  bind_rows()
+
+ggplot(df, aes(x = value, y = yhat)) +
+  geom_line(color = "steelblue") +
+  facet_wrap(~name, scales = "free_x") +
+  labs(x = "Variable Value", y = "Predicted Price", 
+       title = "Partial Dependence Plots for Important Variables") +
+  theme_bw(base_size = 13)
+```

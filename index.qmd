@@ -1,1 +1,9 @@
 # Introduction
+
+My project will explore the relationship between camera price and certain factors, such as brand, ISO, weight, resolution, etc.
+
+I want to create a machine learning model to predict the price of a camera when we know certain parameters about it, and select some of the most important factors that relate to the camera's price. With several models here, I can use it to predict the price of the upcoming camera in the future.
+
+I have a raw data set coming from Kaggle, which includes the camera price and information. I will do a quick EDA to filter out the key information and handle some missing values.
+
+After that, I will go with “study the effect of changing parameters, changing training/test split, or something else about the interpretation method on some output.” My plan is to do random forest and linear regression. When I change certain variables in the model, will the result change or not? Will some of the factors be more related to the price in certain models?
