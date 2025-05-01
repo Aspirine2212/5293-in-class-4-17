@@ -6,10 +6,10 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "5293 Final Project"
   author:
     - Hanzhong Yang (hy2870)
-  repo-url: https://github.com/Aspirine2212/5293-in-class-4-17
+  repo-url: https://github.com/Aspirine2212/5293-in-class-4-17.git
   date: today
   page-footer:
     right: |

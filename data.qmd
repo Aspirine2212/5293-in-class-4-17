@@ -21,7 +21,7 @@ Storage included Weight (inc. batteries), and Dimensions Price.\
 ```{r}
 library(dplyr)
 library(tidyr)
-setwd("C:/Users/ASUS/Desktop/Spring 2025/5293")
+
 
 camera_data <- read.csv("camera_dataset.csv")
 
@@ -153,6 +153,7 @@ basic_stats_tidy
 
 ##random Forest
 ```{r}
+library(randomForest)
 # 去掉 Model 列
 camera_data_rf <- camera_data_filled %>%
   select(-Model)
