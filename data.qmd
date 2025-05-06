@@ -21,12 +21,11 @@ I will load the data set and see what is basic information for it.\
 ```{r}
 library(dplyr)
 library(tidyr)
-<<<<<<< HEAD
+
 library(ggplot2)
 library(GGally)
-=======
 
->>>>>>> b6c8899eb2c888d991917a0de1f7989cbbb7e2a2
+
 
 camera_data <- read.csv("https://raw.githubusercontent.com/Aspirine2212/5293-in-class-4-17/main/camera_dataset.csv")
 
@@ -172,24 +171,23 @@ saveRDS(camera_data_filled, file = "camera_data_clean.rds")
 Get a basic ideas on different brands for the camera.
 
 ```{r}
-<<<<<<< HEAD
-=======
+
+
 library(randomForest)
-# 去掉 Model 列
+
 camera_data_rf <- camera_data_filled %>%
   select(-Model)
 
-# 构建模型
+
 set.seed(123)
 rf_model <- randomForest(Price ~ ., data = camera_data_rf, importance = TRUE)
 
-# 提取变量重要性
+
 importance_df <- importance(rf_model) %>%
   as.data.frame() %>%
   tibble::rownames_to_column("Variable")
 
-# 画图
->>>>>>> b6c8899eb2c888d991917a0de1f7989cbbb7e2a2
+
 library(ggplot2)
 
 camera_data_filled %>%
