@@ -2,9 +2,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "YOUR PROJECT TITLE",
+    "title": "Finding What are the Important Factors for Camera Price With Random Forest and Linear Regression",
     "section": "",
-    "text": "1 Introduction",
+    "text": "1 Introduction\nMy project will explore the relationship between camera price and certain factors, such as brand, ISO, weight, resolution, etc.\nI want to create a machine learning model to predict the price of a camera when we know certain parameters about it, and select some of the most important factors that relate to the camera’s price. With several models here, I can use it to predict the price of the upcoming camera in the future.\nI have a raw data set coming from Kaggle, which includes the camera price and information. I will do a quick EDA to filter out the key information and handle some missing values.\nAfter that, I will go with “study the effect of changing parameters, changing training/test split, or something else about the interpretation method on some output.” My plan is to do random forest and linear regression. When I change certain variables in the model, will the result change or not? Will some of the factors be more related to the price in certain models?",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
     ]
@@ -12,21 +12,281 @@
   {
     "objectID": "data.html",
     "href": "data.html",
-    "title": "2  Data",
+    "title": "2  data",
     "section": "",
-    "text": "2.1 Description",
+    "text": "2.1 Description\nThis data set is related to camera. It includes certain features of the camera. There are 13 properties related to these camera, which are: Model, Release date, Max resolution, Low resolution, Effective pixels, Zoom wide (W), Zoom tele (T), Normal focus range, Macro focus range, Storage included Weight (inc. batteries), Dimensions, and Price.",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#load-the-dataset",
+    "href": "data.html#load-the-dataset",
+    "title": "2  data",
+    "section": "2.2 load the dataset",
+    "text": "2.2 load the dataset\nI will load the data set and see what is basic information for it.\n\n\n\nCode\nlibrary(dplyr)\n\n\n\n载入程序包：'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\n\nCode\nlibrary(tidyr)\nlibrary(ggplot2)\nlibrary(GGally)\n\n\nRegistered S3 method overwritten by 'GGally':\n  method from   \n  +.gg   ggplot2\n\n\nCode\ncamera_data &lt;- read.csv(\"https://raw.githubusercontent.com/Aspirine2212/5293-in-class-4-17/main/camera_dataset.csv\")\n\nquantitative_vars &lt;- camera_data[, c(\"Max.resolution\", \"Low.resolution\", \"Effective.pixels\", \n                                     \"Zoom.wide..W.\", \"Zoom.tele..T.\", \"Normal.focus.range\", \n                                     \"Weight..inc..batteries.\", \"Price\")]\n\nstats_summary &lt;- quantitative_vars |&gt;\n  summarise_all(list(\n    mean = ~mean(., na.rm = TRUE),\n    median = ~median(., na.rm = TRUE),\n    sd = ~sd(., na.rm = TRUE),\n    IQR = ~IQR(., na.rm = TRUE)\n  )) |&gt;\n  pivot_longer(\n    everything(),\n    names_to = c(\"variable\", \"stat\"),\n    names_sep = \"_\"\n  ) |&gt;\n  pivot_wider(\n    names_from = variable,\n    values_from = value\n  )\n\nstats_summary\n\n\n# A tibble: 4 × 9\n  stat   Max.resolution Low.resolution Effective.pixels Zoom.wide..W.\n  &lt;chr&gt;           &lt;dbl&gt;          &lt;dbl&gt;            &lt;dbl&gt;         &lt;dbl&gt;\n1 mean            2475.          1774.             4.60          33.0\n2 median          2560           2048              4             36  \n3 sd               760.           831.             2.84          10.3\n4 IQR             1024           1440              4              3  \n# ℹ 4 more variables: Zoom.tele..T. &lt;dbl&gt;, Normal.focus.range &lt;dbl&gt;,\n#   Weight..inc..batteries. &lt;dbl&gt;, Price &lt;dbl&gt;",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#handling-the-year-and-brand",
+    "href": "data.html#handling-the-year-and-brand",
+    "title": "2  data",
+    "section": "2.3 handling the year and brand",
+    "text": "2.3 handling the year and brand\n\n\nCode\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(stringr)\n\n#getting the group for year\n#camera_data &lt;- camera_data |&gt;\n  #mutate(Year.Group = case_when(\n    #Release.date &gt;= 1994 & Release.date &lt;= 1997 ~ \"1994-1997\",\n    #Release.date &gt;= 1998 & Release.date &lt;= 2001 ~ \"1998-2001\",\n    #Release.date &gt;= 2002 & Release.date &lt;= 2005 ~ \"2002-2005\",\n    #Release.date &gt;= 2006 & Release.date &lt;= 2007 ~ \"2006-2007\"\n  #))\n\n\n#get the brand for each model\ncamera_data &lt;- camera_data |&gt;\n  mutate(brand = word(Model, 1))\n\ncamera_data |&gt;\n  count(brand, sort = TRUE)\n\n\n       brand   n\n1    Olympus 122\n2       Sony 116\n3      Canon 115\n4      Kodak 102\n5   Fujifilm  99\n6      Nikon  90\n7     Pentax  68\n8      Casio  63\n9  Panasonic  55\n10   Samsung  54\n11        HP  46\n12     Ricoh  26\n13   Toshiba  18\n14     Epson  15\n15   Kyocera  15\n16     Leica  11\n17     Sanyo   8\n18      Agfa   7\n19     Sigma   4\n20    Contax   2\n21       JVC   2\n\n\nCode\ncolnames(camera_data)\n\n\n [1] \"Model\"                   \"Release.date\"           \n [3] \"Max.resolution\"          \"Low.resolution\"         \n [5] \"Effective.pixels\"        \"Zoom.wide..W.\"          \n [7] \"Zoom.tele..T.\"           \"Normal.focus.range\"     \n [9] \"Macro.focus.range\"       \"Storage.included\"       \n[11] \"Weight..inc..batteries.\" \"Dimensions\"             \n[13] \"Price\"                   \"brand\"                  \n\n\nCode\ncamera_data &lt;- camera_data %&gt;%\n  rename_with(~ gsub(\"\\\\.\", \"\", .x)) %&gt;%\n  rename(\n    ReleaseDate = Releasedate,\n    MaxResolution = Maxresolution,\n    LowResolution = Lowresolution,\n    EffectivePixels = Effectivepixels,\n    ZoomWide = ZoomwideW,\n    ZoomTele = ZoomteleT,\n    NormalFocus = Normalfocusrange,\n    MacroFocus = Macrofocusrange,\n    Weight = Weightincbatteries,\n    Storage = Storageincluded,\n    Brand = brand\n  )",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
     ]
   },
   {
     "objectID": "data.html#missing-value-analysis",
     "href": "data.html#missing-value-analysis",
-    "title": "2  Data",
-    "section": "2.2 Missing value analysis",
-    "text": "2.2 Missing value analysis",
+    "title": "2  data",
+    "section": "2.4 Missing value analysis",
+    "text": "2.4 Missing value analysis\nFind out how many missing values are there in the dataset.\n\n\n\nCode\nlibrary(dplyr)\n\nna_summary &lt;- camera_data |&gt;\n  summarise(across(everything(), ~sum(is.na(.)))) |&gt;\n  pivot_longer(everything(), names_to = \"variable\", values_to = \"na_count\") |&gt;\n  mutate(na_percent = round(na_count / nrow(camera_data) * 100, 2))\n\nna_summary\n\n\n# A tibble: 14 × 3\n   variable        na_count na_percent\n   &lt;chr&gt;              &lt;int&gt;      &lt;dbl&gt;\n 1 Model                  0       0   \n 2 ReleaseDate            0       0   \n 3 MaxResolution          0       0   \n 4 LowResolution          0       0   \n 5 EffectivePixels        0       0   \n 6 ZoomWide               0       0   \n 7 ZoomTele               0       0   \n 8 NormalFocus            0       0   \n 9 MacroFocus             1       0.1 \n10 Storage                2       0.19\n11 Weight                 2       0.19\n12 Dimensions             2       0.19\n13 Price                  0       0   \n14 Brand                  0       0",
     "crumbs": [
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#handling-missing-values",
+    "href": "data.html#handling-missing-values",
+    "title": "2  data",
+    "section": "2.5 Handling Missing Values",
+    "text": "2.5 Handling Missing Values\nUsing PCA to fill out the missing values.\n\n\nCode\nlibrary(missMDA)\nlibrary(FactoMineR)\n\nvars_for_imputation &lt;- camera_data %&gt;%\n  select(where(is.numeric)) %&gt;%\n  select(where(~ !all(is.na(.)))) %&gt;%\n  select(where(~ sd(., na.rm = TRUE) &gt; 0))\n\n# PCA\nnb_pc &lt;- estim_ncpPCA(vars_for_imputation, method = \"Regularized\")$ncp\nimputed_data &lt;- imputePCA(vars_for_imputation, ncp = nb_pc)\nfilled_data &lt;- imputed_data$completeObs\n\n\ncamera_data_filled &lt;- camera_data\ncamera_data_filled[names(vars_for_imputation)] &lt;- filled_data\n\n\nsum(is.na(camera_data_filled))\n\n\n[1] 0",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#basic-information",
+    "href": "data.html#basic-information",
+    "title": "2  data",
+    "section": "2.6 Basic information",
+    "text": "2.6 Basic information\nHere are the basic information for the cleaned data frame.\n\n\nCode\nlibrary(dplyr)\n\nbasic_stats &lt;- camera_data_filled %&gt;%\n  select(where(is.numeric)) %&gt;%\n  summarise(across(everything(), list(\n    mean = ~mean(., na.rm = TRUE),\n    sd = ~sd(., na.rm = TRUE),\n    median = ~median(., na.rm = TRUE),\n    min = ~min(., na.rm = TRUE),\n    max = ~max(., na.rm = TRUE)\n  ), .names = \"{.col}_{.fn}\"))\n\nbasic_stats_tidy &lt;- basic_stats %&gt;%\n  pivot_longer(everything(), names_to = c(\"variable\", \".value\"), names_sep = \"_\")\n\nbasic_stats_tidy\n\n\n# A tibble: 12 × 6\n   variable           mean     sd median   min   max\n   &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n 1 ReleaseDate     2004.     2.72  2004   1994  2007\n 2 MaxResolution   2475.   760.    2560      0  5616\n 3 LowResolution   1774.   831.    2048      0  4992\n 4 EffectivePixels    4.60   2.84     4      0    21\n 5 ZoomWide          33.0   10.3     36      0    52\n 6 ZoomTele         122.    93.5    108      0   518\n 7 NormalFocus       44.1   24.1     50      0   120\n 8 MacroFocus         7.79   8.10     6      0    85\n 9 Storage           17.5   27.4     16      0   450\n10 Weight           319.   260.     226.     0  1860\n11 Dimensions       105.    24.2    101      0   240\n12 Price            457.   760.     199     14  7999\n\n\nCode\nsaveRDS(camera_data_filled, file = \"camera_data_clean.rds\")",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#the-distribution-of-camera-price",
+    "href": "data.html#the-distribution-of-camera-price",
+    "title": "2  data",
+    "section": "2.7 The Distribution of Camera Price",
+    "text": "2.7 The Distribution of Camera Price\nGet a basic ideas on different brands for the camera.\n\n\nCode\nlibrary(ggplot2)\n\ncamera_data_filled %&gt;%\n  count(Brand) %&gt;%\n  ggplot(aes(x = \"\", y = n, fill = Brand)) +\n  geom_col(width = 1) +\n  coord_polar(theta = \"y\") +\n  labs(title = \"Camera Brand Distribution\") +\n  theme_void()",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#correlation-matrix",
+    "href": "data.html#correlation-matrix",
+    "title": "2  data",
+    "section": "2.8 Correlation Matrix",
+    "text": "2.8 Correlation Matrix\nFind out the correlations among variables.\n\n\n\nCode\nlibrary(GGally)\n\nnumeric_vars &lt;- camera_data_filled %&gt;% \n  select(where(is.numeric))\n\nggcorr(numeric_vars, \n       label = TRUE, \n       label_round = 2, \n       label_size = 3.5,    \n       hjust = 0.75,         \n       size = 3,             \n       low = \"white\", mid = \"gray90\", high = \"red\", midpoint = 0, \n       layout.exp = 1.2     \n) + \n  ggtitle(\"Correlation Matrix of Numeric Variables\") +\n  theme(plot.title = element_text(size = 14, face = \"bold\", hjust = 0.5))",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#histograms",
+    "href": "data.html#histograms",
+    "title": "2  data",
+    "section": "2.9 Histograms",
+    "text": "2.9 Histograms\nSelecting out the ditributions for certain factors.\n\n\n\nCode\nlibrary(ggplot2)\nlibrary(tidyr)\n\ncamera_data_filled %&gt;%\n  select(Price, EffectivePixels, MaxResolution, Weight) %&gt;%\n  pivot_longer(cols = everything(), names_to = \"variable\", values_to = \"value\") %&gt;%\n  ggplot(aes(x = value)) +\n  geom_histogram(bins = 30, fill = \"steelblue\", color = \"white\") +\n  facet_wrap(~ variable, scales = \"free\") +\n  labs(title = \"Histograms of Key Numerical Variables\", x = NULL, y = \"Count\")",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "results.html",
+    "href": "results.html",
+    "title": "3  Result",
+    "section": "",
+    "text": "3.1 Random Forest\nUsing Random Forest to find out the feature importance and graph it.\nCode\nlibrary(randomForest)\nlibrary(iml)\n\ncamera_data_rf &lt;- camera_data_filled %&gt;% select(-Model)\n\n\nset.seed(123)\nn &lt;- nrow(camera_data_rf)\ntrain_index &lt;- sample(n, size = floor(0.7 * n))\ntrain_data &lt;- camera_data_rf[train_index, ]\ntest_data &lt;- camera_data_rf[-train_index, ]\n\n\ntrain_data$Brand &lt;- as.factor(train_data$Brand)\ntest_data$Brand &lt;- as.factor(test_data$Brand)\n\n\nrf_model &lt;- randomForest(Price ~ ., data = train_data, importance = TRUE)\n\n\nimportance_df &lt;- importance(rf_model) %&gt;%\n  as.data.frame() %&gt;%\n  tibble::rownames_to_column(\"Variable\")\n\n#library(jsonlite)\n#write_json(importance_df, \"scripts/importance_data.json\", pretty = TRUE)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Result</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#feature-importance",
+    "href": "results.html#feature-importance",
+    "title": "3  Result",
+    "section": "3.2 Feature Importance",
+    "text": "3.2 Feature Importance\n\n\nCode\nlibrary(ggplot2)\nggplot(importance_df, aes(x = reorder(Variable, `%IncMSE`), y = `%IncMSE`)) +\n  geom_col(fill = \"steelblue\") +\n  coord_flip() +\n  labs(\n    title = \"Variable Importance from Random Forest\",\n    x = \"Variable\",\n    y = \"% Increase in MSE\"\n  ) +\n  theme_minimal()",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Result</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#pdp-plot-single",
+    "href": "results.html#pdp-plot-single",
+    "title": "3  Result",
+    "section": "3.3 PDP plot single",
+    "text": "3.3 PDP plot single\nSelecting out Zoom telephoto for a PDP plot.\n\n\n\nCode\nlibrary(randomForest)\nlibrary(iml)\nlibrary(ggplot2)\n\nx &lt;- train_data[, setdiff(names(train_data), \"Price\")]\ny &lt;- train_data$Price\n\n\nx$Brand &lt;- as.factor(x$Brand)\n\nlibrary(iml)\npredictor &lt;- Predictor$new(rf_model, data = x, y = y)\n\n# FeatureEffect\npdp_zoom &lt;- FeatureEffect$new(predictor, feature = \"ZoomTele\", method = \"pdp\")\nplot(pdp_zoom)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Result</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#all-pdp-plots",
+    "href": "results.html#all-pdp-plots",
+    "title": "3  Result",
+    "section": "3.4 All PDP Plots",
+    "text": "3.4 All PDP Plots\nShowing all PDP plots for numeric variables.\n\n\n\nCode\nlibrary(pdp)\nlibrary(ggplot2)\nlibrary(purrr)\nlibrary(dplyr)\n\n\n\nvars &lt;- c(\"ZoomTele\", \"Weight\", \"LowResolution\", \"MaxResolution\",\n          \"Dimensions\", \"ReleaseDate\", \"ZoomWide\", \"EffectivePixels\",\n          \"MacroFocus\", \"NormalFocus\")\n\ndf &lt;- map(vars, function(varname) {\n  pd &lt;- pdp::partial(\n    object = rf_model,\n    pred.var = varname,\n    train = train_data  \n  )\n  pd &lt;- pd %&gt;%\n    pivot_longer(cols = 1, names_to = \"name\", values_to = \"value\")\n  pd$name &lt;- varname\n  return(pd)\n}) %&gt;%\n  bind_rows()\n\nggplot(df, aes(x = value, y = yhat)) +\n  geom_line(color = \"steelblue\") +\n  facet_wrap(~name, scales = \"free_x\") +\n  labs(x = \"Variable Value\", y = \"Predicted Price\",\n       title = \"Partial Dependence Plots for Important Variables\") +\n  theme_bw(base_size = 13)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Result</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#d-partial-dependence-plot",
+    "href": "results.html#d-partial-dependence-plot",
+    "title": "3  Result",
+    "section": "3.5 2D Partial Dependence Plot",
+    "text": "3.5 2D Partial Dependence Plot\nSelecting out Zoom telephoto and Number of effective pixels for 2D PDP plot.\n\n\n\nCode\nlibrary(pdp)\nlibrary(ggplot2)\nlibrary(viridis)\n\n\n载入需要的程序包：viridisLite\n\n\nCode\npdp_full &lt;- pdp::partial(\n  rf_model,\n  pred.var = c(\"ZoomTele\", \"EffectivePixels\"),  \n  train = train_data,\n  chull = TRUE\n)\n\n\nggplot(pdp_full, aes(x = ZoomTele, y = EffectivePixels)) +\n  geom_tile(aes(fill = yhat)) +\n  geom_point(data = train_data, aes(x = ZoomTele, y = EffectivePixels), alpha = 0.4) +\n  scale_fill_viridis_c(alpha = 0.75) +\n  theme_minimal() +\n  labs(\n    x = \"Zoom Telephoto Range\",\n    y = \"Effective Pixels\",\n    fill = \"Predicted Price\",\n    title = \"2D Partial Dependence Plot: ZoomTele vs EffectivePixels\"\n  )\n\n\n\n\n\n\n\n\n\n##SHAP generated USing SHAP to find more detailed relationships for those factors.\n\n\n\nCode\nlibrary(randomForest)\nlibrary(fastshap)\nlibrary(ggplot2)\n\npred_fun &lt;- function(model, newdata) {\n  predict(model, newdata = newdata)\n}\n\ntrain_data_shap &lt;- train_data\ntest_data_shap &lt;- test_data\n\ntrain_data_shap$YearGroup &lt;- NULL\ntest_data_shap$YearGroup &lt;- NULL\n\ntrain_data_shap$Brand &lt;- factor(train_data_shap$Brand)\ntest_data_shap$Brand &lt;- factor(test_data_shap$Brand, \n                               levels = levels(train_data_shap$Brand))\n\nshap_values &lt;- fastshap::explain(\n  rf_model,\n  X = subset(train_data_shap, select = -Price),\n  pred_wrapper = pred_fun,\n  newdata = subset(test_data_shap[1:5, ], select = -Price), \n  nsim = 500,\n  adjust = TRUE\n)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Result</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#shap-plot",
+    "href": "results.html#shap-plot",
+    "title": "3  Result",
+    "section": "3.6 SHAP plot",
+    "text": "3.6 SHAP plot\n\n\nCode\nshap_df &lt;- data.frame(\n  Feature = colnames(subset(train_data_shap, select = -Price)),\n  Shapley_Value = as.numeric(shap_values[1, ])\n)\n\n\nggplot(shap_df, aes(x = reorder(Feature, Shapley_Value), y = Shapley_Value)) +\n  geom_bar(stat = \"identity\", fill = \"skyblue\") +\n  coord_flip() +\n  labs(\n    title = \"SHAP values for the first test observation\",\n    x = \"Features\",\n    y = \"SHAP value\"\n  ) +\n  theme_minimal()",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Result</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#see-split-difference",
+    "href": "results.html#see-split-difference",
+    "title": "3  Result",
+    "section": "3.7 See Split Difference",
+    "text": "3.7 See Split Difference\nI tried different splits sets for training and testing data set, and try to see if there is any difference in the feature importance plot.\n\n\nCode\nlibrary(randomForest)\nlibrary(dplyr)\nlibrary(tibble)\nlibrary(ggplot2)\n\nset.seed(5293)\nsplits &lt;- c(0.2, 0.7, 0.9)  \nresults &lt;- list()\n\nfor (p in splits) {\n  for (i in 1:10) {  \n    n &lt;- nrow(camera_data_rf)\n    train_index &lt;- sample(1:n, p * n)\n    train_data &lt;- camera_data_rf[train_index, ]\n    test_data &lt;- camera_data_rf[-train_index, ]\n    \n    train_data$YearGroup &lt;- NULL\n    test_data$YearGroup &lt;- NULL\n    train_data$Brand &lt;- as.factor(train_data$Brand)\n    test_data$Brand &lt;- as.factor(test_data$Brand)\n    \n    rf_model &lt;- randomForest(Price ~ ., data = train_data, importance = TRUE)\n    imp_df &lt;- as.data.frame(importance(rf_model)) %&gt;%\n      rownames_to_column(\"Variable\") %&gt;%\n      mutate(Split = paste0(p * 100, \"%\"), Iteration = i)\n    \n    results[[length(results) + 1]] &lt;- imp_df\n  }\n}\n\n\nimportance_all &lt;- bind_rows(results)\n\n\nggplot(importance_all, aes(x = Variable, y = `%IncMSE`, fill = Split)) +\n  geom_boxplot(position = position_dodge(width = 0.8)) +\n  theme_minimal(base_size = 14) +\n  labs(title = \"Variable Importance Stability Under Different Train/Test Splits\",\n       y = \"%IncMSE\", x = \"Variable\") +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))\n\n\n\n\n\n\n\n\n\n##See Seed difference I tried different seed numbers and try to see if there is any difference in the feature importance plot.\n\n\nCode\nseeds &lt;- c(101, 202, 303)\nimp_list &lt;- lapply(seeds, function(s) {\n  set.seed(s)\n  idx &lt;- sample(1:nrow(camera_data_rf), 0.7 * nrow(camera_data_rf))\n  model &lt;- randomForest(Price ~ ., data = camera_data_rf[idx, ], importance = TRUE)\n  imp &lt;- importance(model)[, 1]  # %IncMSE\n  return(imp)\n})\n\nimp_df &lt;- do.call(cbind, imp_list)\ncolnames(imp_df) &lt;- paste0(\"Seed_\", seeds)\nimp_df &lt;- as.data.frame(imp_df)\n\nimp_df &lt;- cbind(Variable = rownames(imp_df), imp_df)\n\nimp_df &lt;- imp_df[, c(\"Variable\", paste0(\"Seed_\", seeds))]",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Result</span>"
+    ]
+  },
+  {
+    "objectID": "results.html#seed-differnce-plot",
+    "href": "results.html#seed-differnce-plot",
+    "title": "3  Result",
+    "section": "3.8 Seed differnce plot",
+    "text": "3.8 Seed differnce plot\n\n\nCode\nlibrary(reshape2)\nlibrary(ggplot2)\n\ncolnames(imp_df)[ncol(imp_df)] &lt;- \"Variable\"\n\n\nmelted &lt;- melt(imp_df, id.vars = \"Variable\")\n\n\nggplot(melted, aes(x = variable, y = reorder(Variable, value), fill = value)) +\n  geom_tile() +\n  scale_fill_viridis_c() +\n  labs(\n    title = \"Variable Importance Stability Across Seeds\",\n    x = \"Seed\",\n    y = \"Variable\"\n  ) +\n  theme_minimal()",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Result</span>"
+    ]
+  },
+  {
+    "objectID": "d3graph.html",
+    "href": "d3graph.html",
+    "title": "4  Graph Interpretation",
+    "section": "",
+    "text": "4.1 Variable Importance from Random Forest\nThis bar chart displays the variable importance (%IncMSE) from the random forest model. Brand and ZoomTele emerge as the most influential features. The importance values reflect how much model error increases when a variable is permuted, with higher bars representing more critical features.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Graph Interpretation</span>"
+    ]
+  },
+  {
+    "objectID": "d3graph.html#partial-dependence-plot-for-zoomtele",
+    "href": "d3graph.html#partial-dependence-plot-for-zoomtele",
+    "title": "4  Graph Interpretation",
+    "section": "4.2 Partial Dependence Plot for ZoomTele",
+    "text": "4.2 Partial Dependence Plot for ZoomTele\nThis partial dependence plot shows the marginal effect of ZoomTele on predicted price. At low values (especially under 50), ZoomTele has a strong positive impact on price. If the level go beyond that, the effect plateaus, suggesting diminishing returns at higher zoom levels.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Graph Interpretation</span>"
+    ]
+  },
+  {
+    "objectID": "d3graph.html#partial-dependence-plots-for-important-variables",
+    "href": "d3graph.html#partial-dependence-plots-for-important-variables",
+    "title": "4  Graph Interpretation",
+    "section": "4.3 Partial Dependence Plots for Important Variables",
+    "text": "4.3 Partial Dependence Plots for Important Variables\nThis panel of PDPs illustrates how each key variable influences the predicted price: - EffectivePixels and MaxResolution exhibit a sharp positive effect after a threshold; - ReleaseDate has a negative effect on Price - Weight demonstrates a non-linear trend with an inflection point.\nThese plots reveal individual feature effects on the model output.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Graph Interpretation</span>"
+    ]
+  },
+  {
+    "objectID": "d3graph.html#d-partial-dependence-plot-zoomtele-vs.-effectivepixels",
+    "href": "d3graph.html#d-partial-dependence-plot-zoomtele-vs.-effectivepixels",
+    "title": "4  Graph Interpretation",
+    "section": "4.4 2D Partial Dependence Plot – ZoomTele vs. EffectivePixels",
+    "text": "4.4 2D Partial Dependence Plot – ZoomTele vs. EffectivePixels\nThis bivariate PDP visualizes the interaction between ZoomTele and EffectivePixels. The top-left corner (low values for both) shows the highest predicted prices, whereas most of the grid reflects lower predictions. This suggests a strong interaction between the two variables in shaping model predictions.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Graph Interpretation</span>"
+    ]
+  },
+  {
+    "objectID": "d3graph.html#shap-values-for-the-first-test-observation",
+    "href": "d3graph.html#shap-values-for-the-first-test-observation",
+    "title": "4  Graph Interpretation",
+    "section": "4.5 SHAP Values for the First Test Observation",
+    "text": "4.5 SHAP Values for the First Test Observation\nThis SHAP summary plot explains the contribution of each feature to the prediction for the first test observation. Brand, MacroFocus, and ReleaseDate contributed positively, while ZoomTele had a large negative impact. SHAP values provide local interpretation and highlight which features drive individual predictions.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Graph Interpretation</span>"
+    ]
+  },
+  {
+    "objectID": "d3graph.html#variable-importance-stability-under-different-traintest-splits",
+    "href": "d3graph.html#variable-importance-stability-under-different-traintest-splits",
+    "title": "4  Graph Interpretation",
+    "section": "4.6 Variable Importance Stability Under Different Train/Test Splits",
+    "text": "4.6 Variable Importance Stability Under Different Train/Test Splits\nThis plot shows how variable importance changes across different train/test splits (20%, 70%, 90%). Features like Brand and Dimensions remain consistently important, while others like Storage and ZoomWide show greater variability, suggesting model sensitivity to training data allocation.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Graph Interpretation</span>"
+    ]
+  },
+  {
+    "objectID": "d3graph.html#variable-importance-stability-across-seeds",
+    "href": "d3graph.html#variable-importance-stability-across-seeds",
+    "title": "4  Graph Interpretation",
+    "section": "4.7 Variable Importance Stability Across Seeds",
+    "text": "4.7 Variable Importance Stability Across Seeds\nThe heat map presents variable importance values across different random seeds. Features like Brand and ZoomTele remain consistently important, demonstrating robustness, whereas MacroFocus and Storage exhibit more fluctuation between seeds, indicating potential model instability.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Graph Interpretation</span>"
+    ]
+  },
+  {
+    "objectID": "d3graph.html#linear-regression-vs-random-forest",
+    "href": "d3graph.html#linear-regression-vs-random-forest",
+    "title": "4  Graph Interpretation",
+    "section": "4.8 Linear Regression vs Random Forest",
+    "text": "4.8 Linear Regression vs Random Forest\nThis comparative chart illustrates feature importance across linear regression and random forest models. While linear regression heavily weights brand dummy variables (e.g., Brand Kodak, Brand Leica), random forest assigns more importance to continuous features like EffectivePixels, ZoomTele, and Brand. This highlights the non-linear model’s ability to capture complex feature interactions.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Graph Interpretation</span>"
+    ]
+  },
+  {
+    "objectID": "conclusion.html",
+    "href": "conclusion.html",
+    "title": "5  Three Goals of the Project",
+    "section": "",
+    "text": "5.1 Random Forest Result\nIn this project, I compare the different types of factors of cameras (Such as Brand, Release Date, Max resolution, and so on…), to the camera price. As the proposal mentioned, I went deeper in the Random Forest, and utilize PDP plots, SHAP values, and feature importance to find the key factors. Based on the Random Forest model, we can tell that camera’s brand and telephoto zoom are the most important factors to its price. It makes sense for the market since some camera factory like Leica, usually has higher average price than common Sony or Nikon camera.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Three Goals of the Project</span>"
+    ]
+  },
+  {
+    "objectID": "conclusion.html#adjusting-seed-numbers-and-test-sets",
+    "href": "conclusion.html#adjusting-seed-numbers-and-test-sets",
+    "title": "5  Three Goals of the Project",
+    "section": "5.2 Adjusting Seed Numbers and Test sets",
+    "text": "5.2 Adjusting Seed Numbers and Test sets\nIn the following test, I did the proposal goals, which is changing the splits of the training sets and testing sets. I selected 20%, 70% and 90% to see the feature importance difference. I found that the IncMSE% for each variable are lower in 20%, which makes sense since the training data set is very small. The splits in 70% and 90% shows no clear difference in each variables, and the brand and dimensions still are the most important factors to the camera price.\nWith different seed numbers, we can tell the top related factors like Brand and Zoomtele show more contribution for the model. Some factors like MaxResolution and EffectivePixles show more contributions with less seeds. However, the order for the related factors still did not change, and we can say that seed number for the Random Forest model affect very little on the results.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Three Goals of the Project</span>"
+    ]
+  },
+  {
+    "objectID": "conclusion.html#compare-to-linear-regression",
+    "href": "conclusion.html#compare-to-linear-regression",
+    "title": "5  Three Goals of the Project",
+    "section": "5.3 Compare to Linear Regression",
+    "text": "5.3 Compare to Linear Regression\nThe third goal of my project is to see the difference between Random Forest and Linear Regression. I made the feature importance plot again for both Random Forest and Linear Regression. I found that in Linear regression, the Brand shows much more importance than Random Forest. We can tell the top important features for Linear Regression are different types of brand, which matches our earlier conclusion that camera brand has the most significant effect towards its price.\nOn the other hand, we can see the variable names for Linear Regression and Random Forest have difference. Linear Regression includes much more types of variables. Due to the effect of the top variables, the other related variables has little contribution towards the model, which makes us hard to judge camera’s price based on the other related factors. The Random Forest has much more clear result and stable model, and I believe it is a better model for judging camera’s price on this data set.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Three Goals of the Project</span>"
     ]
   }
 ]

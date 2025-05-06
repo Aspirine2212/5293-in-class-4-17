@@ -1,13 +1,23 @@
 ---
-title: "Result"
+title: "data"
 format: html
 editor: 
   markdown: 
     wrap: 72
 ---
 
-###load the dataset
-Load the data frame we just cleaned in the last section. \
+
+
+## Description
+
+This data set is related to camera. It includes certain features of the
+camera. There are 13 properties related to these camera, which are:
+Model, Release date, Max resolution, Low resolution, Effective pixels,
+Zoom wide (W), Zoom tele (T), Normal focus range, Macro focus range,
+Storage included Weight (inc. batteries), and Dimensions Price.\
+
+## load the dataset
+
 ```{r}
 library(dplyr)
 library(tidyr)
@@ -22,12 +32,139 @@ library(forcats)
 library(reshape2)
 library(fastshap)
 
-camera_data_filled <- readRDS("camera_data_clean.rds")
-colnames(camera_data_filled)
+camera_data <- read.csv("https://raw.githubusercontent.com/Aspirine2212/5293-in-class-4-17/main/camera_dataset.csv")
+
+quantitative_vars <- camera_data[, c("Max.resolution", "Low.resolution", "Effective.pixels", 
+                                     "Zoom.wide..W.", "Zoom.tele..T.", "Normal.focus.range", 
+                                     "Weight..inc..batteries.", "Price")]
+
+stats_summary <- quantitative_vars |>
+  summarise_all(list(
+    mean = ~mean(., na.rm = TRUE),
+    median = ~median(., na.rm = TRUE),
+    sd = ~sd(., na.rm = TRUE),
+    IQR = ~IQR(., na.rm = TRUE)
+  )) |>
+  pivot_longer(
+    everything(),
+    names_to = c("variable", "stat"),
+    names_sep = "_"
+  ) |>
+  pivot_wider(
+    names_from = variable,
+    values_from = value
+  )
+
+stats_summary
+
 ```
 
-## Random Forest
-Using Random Forest to find out the feature importance and graph it.\
+## handling the year and brand
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(stringr)
+
+#getting the group for year
+#camera_data <- camera_data |>
+  #mutate(Year.Group = case_when(
+    #Release.date >= 1994 & Release.date <= 1997 ~ "1994-1997",
+    #Release.date >= 1998 & Release.date <= 2001 ~ "1998-2001",
+    #Release.date >= 2002 & Release.date <= 2005 ~ "2002-2005",
+    #Release.date >= 2006 & Release.date <= 2007 ~ "2006-2007"
+  #))
+
+
+#get the brand for each model
+camera_data <- camera_data |>
+  mutate(brand = word(Model, 1))
+
+camera_data |>
+  count(brand, sort = TRUE)
+
+#colnames(camera_data)
+
+camera_data <- camera_data %>%
+  rename_with(~ gsub("\\.", "", .x)) %>%
+  rename(
+    ReleaseDate = Releasedate,
+    MaxResolution = Maxresolution,
+    LowResolution = Lowresolution,
+    EffectivePixels = Effectivepixels,
+    ZoomWide = ZoomwideW,
+    ZoomTele = ZoomteleT,
+    NormalFocus = Normalfocusrange,
+    MacroFocus = Macrofocusrange,
+    Weight = Weightincbatteries,
+    Storage = Storageincluded,
+    Brand = brand
+  )
+
+```
+
+## Missing value analysis
+
+```{r}
+library(dplyr)
+
+na_summary <- camera_data |>
+  summarise(across(everything(), ~sum(is.na(.)))) |>
+  pivot_longer(everything(), names_to = "variable", values_to = "na_count") |>
+  mutate(na_percent = round(na_count / nrow(camera_data) * 100, 2))
+
+na_summary
+
+```
+
+## Handling Missing Values
+
+```{r}
+library(missMDA)
+library(FactoMineR)
+
+vars_for_imputation <- camera_data %>%
+  select(where(is.numeric)) %>%
+  select(where(~ !all(is.na(.)))) %>%
+  select(where(~ sd(., na.rm = TRUE) > 0))
+
+# PCA
+nb_pc <- estim_ncpPCA(vars_for_imputation, method = "Regularized")$ncp
+imputed_data <- imputePCA(vars_for_imputation, ncp = nb_pc)
+filled_data <- imputed_data$completeObs
+
+
+camera_data_filled <- camera_data
+camera_data_filled[names(vars_for_imputation)] <- filled_data
+
+
+#sum(is.na(camera_data_filled))
+
+```
+
+## Basic information
+
+```{r}
+library(dplyr)
+
+basic_stats <- camera_data_filled %>%
+  select(where(is.numeric)) %>%
+  summarise(across(everything(), list(
+    mean = ~mean(., na.rm = TRUE),
+    sd = ~sd(., na.rm = TRUE),
+    median = ~median(., na.rm = TRUE),
+    min = ~min(., na.rm = TRUE),
+    max = ~max(., na.rm = TRUE)
+  ), .names = "{.col}_{.fn}"))
+
+basic_stats_tidy <- basic_stats %>%
+  pivot_longer(everything(), names_to = c("variable", ".value"), names_sep = "_")
+
+basic_stats_tidy
+```
+
+##Random Forest
+
 ```{r}
 library(randomForest)
 library(iml)
@@ -53,11 +190,10 @@ importance_df <- importance(rf_model) %>%
   as.data.frame() %>%
   tibble::rownames_to_column("Variable")
 
-#library(jsonlite)
-#write_json(importance_df, "scripts/importance_data.json", pretty = TRUE)
+
 ```
 
-## Feature Importance
+##Feture Importance
 
 ```{r}
 library(ggplot2)
@@ -72,8 +208,8 @@ ggplot(importance_df, aes(x = reorder(Variable, `%IncMSE`), y = `%IncMSE`)) +
   theme_minimal()
 ```
 
-## PDP plot single
-Selecting out Zoom telephoto for a PDP plot. \
+##PDP plot single
+
 ```{r}
 
 library(randomForest)
@@ -95,9 +231,8 @@ plot(pdp_zoom)
 
 
 ```
+##All PDP Plots
 
-## All PDP Plots
-Showing all PDP plots for numeric variables.\
 ```{r}
 library(pdp)
 library(ggplot2)
@@ -133,8 +268,8 @@ ggplot(df, aes(x = value, y = yhat)) +
 
 ```
 
-## 2D Partial Dependence Plot
-Selecting out Zoom telephoto and Number of effective pixels for 2D PDP plot.\
+##2D Partial Dependence Plot
+
 ```{r}
 
 library(pdp)
@@ -166,8 +301,8 @@ ggplot(pdp_full, aes(x = ZoomTele, y = EffectivePixels)) +
 
 ```
 
-##SHAP generated
-USing SHAP to find more detailed relationships for those factors.\
+##shap generated
+
 ```{r}
 library(randomForest)
 library(fastshap)
@@ -198,7 +333,7 @@ shap_values <- fastshap::explain(
 
 ```
 
-## SHAP plot
+##shap plot
 
 ```{r}
 shap_df <- data.frame(
@@ -219,8 +354,10 @@ ggplot(shap_df, aes(x = reorder(Feature, Shapley_Value), y = Shapley_Value)) +
 
 ```
 
-## See Split Difference
-I tried different splits sets for training and testing data set, and try to see if there is any difference in the feature importance plot. 
+
+
+##See Split Difference
+
 ```{r}
 library(randomForest)
 library(dplyr)
@@ -228,7 +365,7 @@ library(tibble)
 library(ggplot2)
 
 set.seed(5293)
-splits <- c(0.2, 0.7, 0.9)  
+splits <- c(0.6, 0.7, 0.8)  
 results <- list()
 
 for (p in splits) {
@@ -265,8 +402,10 @@ ggplot(importance_all, aes(x = Variable, y = `%IncMSE`, fill = Split)) +
 
 ```
 
-##See Seed difference
-I tried different seed numbers and try to see if there is any difference in the feature importance plot. 
+
+##see seed difference
+
+
 ```{r}
 seeds <- c(101, 202, 303)
 imp_list <- lapply(seeds, function(s) {
@@ -287,7 +426,8 @@ imp_df <- imp_df[, c("Variable", paste0("Seed_", seeds))]
 
 ```
 
-## Seed differnce plot
+
+##Seed differnce plot
 
 ```{r}
 library(reshape2)
@@ -311,8 +451,8 @@ ggplot(melted, aes(x = variable, y = reorder(Variable, value), fill = value)) +
 
 ```
 
-# Linear regression comparison
-Using Linear Regression result to compare the Random Forest result.\
+#Linear regression comparison
+
 ```{r}
 lm_model <- lm(Price ~ ., data = train_data)
 

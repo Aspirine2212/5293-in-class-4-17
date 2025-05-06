@@ -1,0 +1,62 @@
+[
+  {
+    "Variable": "ReleaseDate",
+    "%IncMSE": 5.5317,
+    "IncNodePurity": 13950837.6655
+  },
+  {
+    "Variable": "MaxResolution",
+    "%IncMSE": 9.0879,
+    "IncNodePurity": 49725934.4849
+  },
+  {
+    "Variable": "LowResolution",
+    "%IncMSE": 11.9571,
+    "IncNodePurity": 43824607.6552
+  },
+  {
+    "Variable": "EffectivePixels",
+    "%IncMSE": 7.8181,
+    "IncNodePurity": 43829460.1955
+  },
+  {
+    "Variable": "ZoomWide",
+    "%IncMSE": 9.6283,
+    "IncNodePurity": 15282724.6877
+  },
+  {
+    "Variable": "ZoomTele",
+    "%IncMSE": 19.5731,
+    "IncNodePurity": 46825209.6881
+  },
+  {
+    "Variable": "NormalFocus",
+    "%IncMSE": 6.1976,
+    "IncNodePurity": 5038473.0288
+  },
+  {
+    "Variable": "MacroFocus",
+    "%IncMSE": 6.3732,
+    "IncNodePurity": 6042628.0418
+  },
+  {
+    "Variable": "Storage",
+    "%IncMSE": 10.5712,
+    "IncNodePurity": 12195353.8821
+  },
+  {
+    "Variable": "Weight",
+    "%IncMSE": 17.774,
+    "IncNodePurity": 84586953.1783
+  },
+  {
+    "Variable": "Dimensions",
+    "%IncMSE": 17.9058,
+    "IncNodePurity": 64716814.1043
+  },
+  {
+    "Variable": "Brand",
+    "%IncMSE": 28.9009,
+    "IncNodePurity": 69267775.4291
+  }
+]

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Interactive graph – YOUR PROJECT TITLE</title>
+<title>4&nbsp; Graph Interpretation – Finding What are the Important Factors for Camera Price With Random Forest and Linear Regression</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./d3graph.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interactive graph</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./d3graph.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Graph Interpretation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -96,9 +96,9 @@ ul.task-list li input[type="checkbox"] {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">YOUR PROJECT TITLE</a> 
+      <a href="./">Finding What are the Important Factors for Camera Price With Random Forest and Linear Regression</a> 
         <div class="sidebar-tools-main">
-    <a href="https://aspirine2212.github.io/5293-in-class-4-17/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-git"></i></a>
+    <a href="https://github.com/Aspirine2212/5293-in-class-4-17" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
     </div>
       </div>
@@ -118,25 +118,25 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">data</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./results.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Results</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Result</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./d3graph.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interactive graph</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Graph Interpretation</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./conclusion.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Three Goals of the Project</span></span></a>
   </div>
 </li>
     </ul>
@@ -144,15 +144,28 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#variable-importance-from-random-forest" id="toc-variable-importance-from-random-forest" class="nav-link active" data-scroll-target="#variable-importance-from-random-forest"><span class="header-section-number">4.1</span> Variable Importance from Random Forest</a></li>
+  <li><a href="#partial-dependence-plot-for-zoomtele" id="toc-partial-dependence-plot-for-zoomtele" class="nav-link" data-scroll-target="#partial-dependence-plot-for-zoomtele"><span class="header-section-number">4.2</span> Partial Dependence Plot for ZoomTele</a></li>
+  <li><a href="#partial-dependence-plots-for-important-variables" id="toc-partial-dependence-plots-for-important-variables" class="nav-link" data-scroll-target="#partial-dependence-plots-for-important-variables"><span class="header-section-number">4.3</span> Partial Dependence Plots for Important Variables</a></li>
+  <li><a href="#d-partial-dependence-plot-zoomtele-vs.-effectivepixels" id="toc-d-partial-dependence-plot-zoomtele-vs.-effectivepixels" class="nav-link" data-scroll-target="#d-partial-dependence-plot-zoomtele-vs.-effectivepixels"><span class="header-section-number">4.4</span> 2D Partial Dependence Plot – ZoomTele vs.&nbsp;EffectivePixels</a></li>
+  <li><a href="#shap-values-for-the-first-test-observation" id="toc-shap-values-for-the-first-test-observation" class="nav-link" data-scroll-target="#shap-values-for-the-first-test-observation"><span class="header-section-number">4.5</span> SHAP Values for the First Test Observation</a></li>
+  <li><a href="#variable-importance-stability-under-different-traintest-splits" id="toc-variable-importance-stability-under-different-traintest-splits" class="nav-link" data-scroll-target="#variable-importance-stability-under-different-traintest-splits"><span class="header-section-number">4.6</span> Variable Importance Stability Under Different Train/Test Splits</a></li>
+  <li><a href="#variable-importance-stability-across-seeds" id="toc-variable-importance-stability-across-seeds" class="nav-link" data-scroll-target="#variable-importance-stability-across-seeds"><span class="header-section-number">4.7</span> Variable Importance Stability Across Seeds</a></li>
+  <li><a href="#linear-regression-vs-random-forest" id="toc-linear-regression-vs-random-forest" class="nav-link" data-scroll-target="#linear-regression-vs-random-forest"><span class="header-section-number">4.8</span> Linear Regression vs Random Forest</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Aspirine2212/5293-in-class-4-17/edit/main/d3graph.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Aspirine2212/5293-in-class-4-17/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Interactive graph</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Graph Interpretation</span></h1>
 </div>
 
 
@@ -169,18 +182,48 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<style>
-  * {
-    font-family: sans-serif;
-  }
-</style>
-<div id="plot">
+<section id="variable-importance-from-random-forest" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="variable-importance-from-random-forest"><span class="header-section-number">4.1</span> Variable Importance from Random Forest</h2>
+<p>This bar chart displays the variable importance (%IncMSE) from the random forest model. <strong>Brand</strong> and <strong>ZoomTele</strong> emerge as the most influential features. The importance values reflect how much model error increases when a variable is permuted, with higher bars representing more critical features.<br>
+<img src="docs/results_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="RF Feature Importance"></p>
+</section>
+<section id="partial-dependence-plot-for-zoomtele" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="partial-dependence-plot-for-zoomtele"><span class="header-section-number">4.2</span> Partial Dependence Plot for ZoomTele</h2>
+<p>This partial dependence plot shows the marginal effect of <strong>ZoomTele</strong> on predicted price. At low values (especially under 50), ZoomTele has a strong positive impact on price. If the level go beyond that, the effect plateaus, suggesting diminishing returns at higher zoom levels.<br>
+<img src="docs/results_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Single PDP"></p>
+</section>
+<section id="partial-dependence-plots-for-important-variables" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="partial-dependence-plots-for-important-variables"><span class="header-section-number">4.3</span> Partial Dependence Plots for Important Variables</h2>
+<p>This panel of PDPs illustrates how each key variable influences the predicted price: - <strong>EffectivePixels</strong> and <strong>MaxResolution</strong> exhibit a sharp positive effect after a threshold; - <strong>ReleaseDate</strong> has a negative effect on <strong>Price</strong> - <strong>Weight</strong> demonstrates a non-linear trend with an inflection point.</p>
+<p>These plots reveal individual feature effects on the model output.<br>
+<img src="docs/results_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="All PDP"></p>
+</section>
+<section id="d-partial-dependence-plot-zoomtele-vs.-effectivepixels" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="d-partial-dependence-plot-zoomtele-vs.-effectivepixels"><span class="header-section-number">4.4</span> 2D Partial Dependence Plot – ZoomTele vs.&nbsp;EffectivePixels</h2>
+<p>This bivariate PDP visualizes the interaction between <strong>ZoomTele</strong> and <strong>EffectivePixels</strong>. The top-left corner (low values for both) shows the highest predicted prices, whereas most of the grid reflects lower predictions. This suggests a strong interaction between the two variables in shaping model predictions.<br>
+<img src="docs/results_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="2D Partial Dependence"></p>
+</section>
+<section id="shap-values-for-the-first-test-observation" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="shap-values-for-the-first-test-observation"><span class="header-section-number">4.5</span> SHAP Values for the First Test Observation</h2>
+<p>This SHAP summary plot explains the contribution of each feature to the prediction for the first test observation. <strong>Brand</strong>, <strong>MacroFocus</strong>, and <strong>ReleaseDate</strong> contributed positively, while <strong>ZoomTele</strong> had a large negative impact. SHAP values provide local interpretation and highlight which features drive individual predictions.<br>
+<img src="docs/results_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="SHAP"></p>
+</section>
+<section id="variable-importance-stability-under-different-traintest-splits" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="variable-importance-stability-under-different-traintest-splits"><span class="header-section-number">4.6</span> Variable Importance Stability Under Different Train/Test Splits</h2>
+<p>This plot shows how variable importance changes across different train/test splits (20%, 70%, 90%). Features like <strong>Brand</strong> and <strong>Dimensions</strong> remain consistently important, while others like <strong>Storage</strong> and <strong>ZoomWide</strong> show greater variability, suggesting model sensitivity to training data allocation.<br>
+<img src="docs/results_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Different Train/Test Splits"></p>
+</section>
+<section id="variable-importance-stability-across-seeds" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="variable-importance-stability-across-seeds"><span class="header-section-number">4.7</span> Variable Importance Stability Across Seeds</h2>
+<p>The heat map presents variable importance values across different random seeds. Features like <strong>Brand</strong> and <strong>ZoomTele</strong> remain consistently important, demonstrating robustness, whereas <strong>MacroFocus</strong> and <strong>Storage</strong> exhibit more fluctuation between seeds, indicating potential model instability.<br>
+<img src="docs/results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Across Seeds"></p>
+</section>
+<section id="linear-regression-vs-random-forest" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="linear-regression-vs-random-forest"><span class="header-section-number">4.8</span> Linear Regression vs Random Forest</h2>
+<p>This comparative chart illustrates feature importance across linear regression and random forest models. While linear regression heavily weights brand dummy variables (e.g., Brand Kodak, Brand Leica), random forest assigns more importance to continuous features like <strong>EffectivePixels</strong>, <strong>ZoomTele</strong>, and <strong>Brand</strong>. This highlights the non-linear model’s ability to capture complex feature interactions. <img src="docs/results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Linear Regression"></p>
 
-</div>
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="scripts/myscript.js"></script>
 
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -605,13 +648,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./results.html" class="pagination-link" aria-label="Results">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Results</span></span>
+      <a href="./results.html" class="pagination-link" aria-label="Result">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Result</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./conclusion.html" class="pagination-link" aria-label="Conclusion">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Conclusion</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./conclusion.html" class="pagination-link" aria-label="Three Goals of the Project">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Three Goals of the Project</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -623,7 +666,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://aspirine2212.github.io/5293-in-class-4-17/edit/main/d3graph.qmd" class="toc-action"><i class="bi bi-git"></i>Edit this page</a></li><li><a href="https://aspirine2212.github.io/5293-in-class-4-17/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Aspirine2212/5293-in-class-4-17/edit/main/d3graph.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/Aspirine2212/5293-in-class-4-17/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
 </div>

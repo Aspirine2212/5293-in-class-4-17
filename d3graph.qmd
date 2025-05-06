@@ -1,13 +1,96 @@
-# Interactive graph
+---
+title: "Graph Interpretation"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
 
-<style>
-  * {
-    font-family: sans-serif;
-  }
-</style> 
+## Variable Importance from Random Forest
 
-<div id="plot">
-</div>
+This bar chart displays the variable importance (%IncMSE) from the
+random forest model. **Brand** and **ZoomTele** emerge as the most
+influential features. The importance values reflect how much model error
+increases when a variable is permuted, with higher bars representing
+more critical features.\
+![RF Feature
+Importance](docs/results_files/figure-html/unnamed-chunk-3-1.png){fig-align="center"
+width="70%"}
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="scripts/myscript.js"></script>
+## Partial Dependence Plot for ZoomTele
+
+This partial dependence plot shows the marginal effect of **ZoomTele**
+on predicted price. At low values (especially under 50), ZoomTele has a
+strong positive impact on price. If the level go beyond that, the effect
+plateaus, suggesting diminishing returns at higher zoom levels.\
+![Single
+PDP](docs/results_files/figure-html/unnamed-chunk-4-1.png){fig-align="center"
+width="70%"}
+
+## Partial Dependence Plots for Important Variables
+
+This panel of PDPs illustrates how each key variable influences the
+predicted price: - **EffectivePixels** and **MaxResolution** exhibit a
+sharp positive effect after a threshold; - **ReleaseDate** has a
+negative effect on **Price** - **Weight** demonstrates a non-linear
+trend with an inflection point.
+
+These plots reveal individual feature effects on the model output.\
+![All
+PDP](docs/results_files/figure-html/unnamed-chunk-5-1.png){fig-align="center"
+width="70%"}
+
+## 2D Partial Dependence Plot – ZoomTele vs. EffectivePixels
+
+This bivariate PDP visualizes the interaction between **ZoomTele** and
+**EffectivePixels**. The top-left corner (low values for both) shows the
+highest predicted prices, whereas most of the grid reflects lower
+predictions. This suggests a strong interaction between the two
+variables in shaping model predictions.\
+![2D Partial
+Dependence](docs/results_files/figure-html/unnamed-chunk-6-1.png){fig-align="center"
+width="70%"}
+
+## SHAP Values for the First Test Observation
+
+This SHAP summary plot explains the contribution of each feature to the
+prediction for the first test observation. **Brand**, **MacroFocus**,
+and **ReleaseDate** contributed positively, while **ZoomTele** had a
+large negative impact. SHAP values provide local interpretation and
+highlight which features drive individual predictions.\
+![SHAP](docs/results_files/figure-html/unnamed-chunk-8-1.png){fig-align="center"
+width="70%"}
+
+## Variable Importance Stability Under Different Train/Test Splits
+
+This plot shows how variable importance changes across different
+train/test splits (20%, 70%, 90%). Features like **Brand** and
+**Dimensions** remain consistently important, while others like
+**Storage** and **ZoomWide** show greater variability, suggesting model
+sensitivity to training data allocation.\
+![Different Train/Test
+Splits](docs/results_files/figure-html/unnamed-chunk-9-1.png){fig-align="center"
+width="70%"}
+
+## Variable Importance Stability Across Seeds
+
+The heat map presents variable importance values across different random
+seeds. Features like **Brand** and **ZoomTele** remain consistently
+important, demonstrating robustness, whereas **MacroFocus** and
+**Storage** exhibit more fluctuation between seeds, indicating potential
+model instability.\
+![Across
+Seeds](docs/results_files/figure-html/unnamed-chunk-11-1.png){fig-align="center"
+width="70%"}
+
+## Linear Regression vs Random Forest
+
+This comparative chart illustrates feature importance across linear
+regression and random forest models. While linear regression heavily
+weights brand dummy variables (e.g., Brand Kodak, Brand Leica), random
+forest assigns more importance to continuous features like
+**EffectivePixels**, **ZoomTele**, and **Brand**. This highlights the
+non-linear model’s ability to capture complex feature interactions.
+![Linear
+Regression](docs/results_files/figure-html/unnamed-chunk-12-1.png){fig-align="center"
+width="70%"}

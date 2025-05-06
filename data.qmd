@@ -6,24 +6,25 @@ editor:
     wrap: 72
 ---
 
-# Data
-
 ## Description
 
 This data set is related to camera. It includes certain features of the
 camera. There are 13 properties related to these camera, which are:
 Model, Release date, Max resolution, Low resolution, Effective pixels,
 Zoom wide (W), Zoom tele (T), Normal focus range, Macro focus range,
-Storage included Weight (inc. batteries), and Dimensions Price.\
+Storage included Weight (inc. batteries), Dimensions, and Price.\
 
 ## load the dataset
+
+I will load the data set and see what is basic information for it.\
 
 ```{r}
 library(dplyr)
 library(tidyr)
-setwd("C:/Users/ASUS/Desktop/Spring 2025/5293")
+library(ggplot2)
+library(GGally)
 
-camera_data <- read.csv("camera_dataset.csv")
+camera_data <- read.csv("https://raw.githubusercontent.com/Aspirine2212/5293-in-class-4-17/main/camera_dataset.csv")
 
 quantitative_vars <- camera_data[, c("Max.resolution", "Low.resolution", "Effective.pixels", 
                                      "Zoom.wide..W.", "Zoom.tele..T.", "Normal.focus.range", 
@@ -58,13 +59,13 @@ library(ggplot2)
 library(stringr)
 
 #getting the group for year
-camera_data <- camera_data |>
-  mutate(Year.Group = case_when(
-    Release.date >= 1994 & Release.date <= 1997 ~ "1994-1997",
-    Release.date >= 1998 & Release.date <= 2001 ~ "1998-2001",
-    Release.date >= 2002 & Release.date <= 2005 ~ "2002-2005",
-    Release.date >= 2006 & Release.date <= 2007 ~ "2006-2007"
-  ))
+#camera_data <- camera_data |>
+  #mutate(Year.Group = case_when(
+    #Release.date >= 1994 & Release.date <= 1997 ~ "1994-1997",
+    #Release.date >= 1998 & Release.date <= 2001 ~ "1998-2001",
+    #Release.date >= 2002 & Release.date <= 2005 ~ "2002-2005",
+    #Release.date >= 2006 & Release.date <= 2007 ~ "2006-2007"
+  #))
 
 
 #get the brand for each model
@@ -73,6 +74,8 @@ camera_data <- camera_data |>
 
 camera_data |>
   count(brand, sort = TRUE)
+
+colnames(camera_data)
 
 camera_data <- camera_data %>%
   rename_with(~ gsub("\\.", "", .x)) %>%
@@ -87,13 +90,14 @@ camera_data <- camera_data %>%
     MacroFocus = Macrofocusrange,
     Weight = Weightincbatteries,
     Storage = Storageincluded,
-    YearGroup = YearGroup,
     Brand = brand
   )
 
 ```
 
 ## Missing value analysis
+
+Find out how many missing values are there in the dataset.\
 
 ```{r}
 library(dplyr)
@@ -106,7 +110,11 @@ na_summary <- camera_data |>
 na_summary
 
 ```
+
 ## Handling Missing Values
+
+Using PCA to fill out the missing values.
+
 ```{r}
 library(missMDA)
 library(FactoMineR)
@@ -130,8 +138,10 @@ sum(is.na(camera_data_filled))
 
 ```
 
-
 ## Basic information
+
+Here are the basic information for the cleaned data frame.
+
 ```{r}
 library(dplyr)
 
@@ -149,88 +159,62 @@ basic_stats_tidy <- basic_stats %>%
   pivot_longer(everything(), names_to = c("variable", ".value"), names_sep = "_")
 
 basic_stats_tidy
+
+saveRDS(camera_data_filled, file = "camera_data_clean.rds")
 ```
 
-##random Forest
+## The Distribution of Camera Price
+
+Get a basic ideas on different brands for the camera.
+
 ```{r}
-# 去掉 Model 列
-camera_data_rf <- camera_data_filled %>%
-  select(-Model)
-
-# 构建模型
-set.seed(123)
-rf_model <- randomForest(Price ~ ., data = camera_data_rf, importance = TRUE)
-
-# 提取变量重要性
-importance_df <- importance(rf_model) %>%
-  as.data.frame() %>%
-  tibble::rownames_to_column("Variable")
-
-# 画图
 library(ggplot2)
-ggplot(importance_df, aes(x = reorder(Variable, `%IncMSE`), y = `%IncMSE`)) +
-  geom_col(fill = "steelblue") +
-  coord_flip() +
-  labs(title = "Variable Importance from Random Forest (Model Excluded)",
-       x = "Variable", y = "% Increase in MSE") +
-  theme_minimal()
 
-#colnames(camera_data_rf)
+camera_data_filled %>%
+  count(Brand) %>%
+  ggplot(aes(x = "", y = n, fill = Brand)) +
+  geom_col(width = 1) +
+  coord_polar(theta = "y") +
+  labs(title = "Camera Brand Distribution") +
+  theme_void()
 
 ```
 
-##PDP plot single
+## Correlation Matrix
+
+Find out the correlations among variables.\
+
 ```{r}
+library(GGally)
 
-library(randomForest)
-library(iml)
-library(ggplot2)
+numeric_vars <- camera_data_filled %>% 
+  select(where(is.numeric))
 
-X <- camera_data_rf[, setdiff(names(camera_data_rf), "Price")]
-predictor <- Predictor$new(rf_model, data = X, y = camera_data_rf$Price)
-
-
-pdp_zoom <- FeatureEffect$new(predictor, feature = "ZoomTele", method = "pdp")
-
-
-plot(pdp_zoom) +
-  labs(
-    title = "Partial Dependence Plot: ZoomTele vs Price",
-    x = "Zoom Telephoto Range",
-    y = "Predicted Price"
-  ) +
-  theme_minimal(base_size = 13)
-
-pdp::partial(rf_model, pred.var = "LowResolution", train = camera_data_rf) %>% head()
+ggcorr(numeric_vars, 
+       label = TRUE, 
+       label_round = 2, 
+       label_size = 3.5,    
+       hjust = 0.75,         
+       size = 3,             
+       low = "white", mid = "gray90", high = "red", midpoint = 0, 
+       layout.exp = 1.2     
+) + 
+  ggtitle("Correlation Matrix of Numeric Variables") +
+  theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
 ```
 
-##PDP plot all 
+## Histograms
+Selecting out the ditributions for certain factors.\
 ```{r}
-library(pdp)
 library(ggplot2)
-library(purrr)
-library(dplyr)
+library(tidyr)
 
-#camera_data_rf %>% summarise(across(all_of(vars), ~n_distinct(.)))
+camera_data_filled %>%
+  select(Price, EffectivePixels, MaxResolution, Weight) %>%
+  pivot_longer(cols = everything(), names_to = "variable", values_to = "value") %>%
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  facet_wrap(~ variable, scales = "free") +
+  labs(title = "Histograms of Key Numerical Variables", x = NULL, y = "Count")
 
-vars <- c("ZoomTele", "Weight", "LowResolution", "MaxResolution", "Dimensions", "ReleaseDate", "ZoomWide", "EffectivePixels", "MacroFocus", "NormalFocus")
-
-df <- map(vars, function(varname) {
-  pd <- pdp::partial(
-    object = rf_model, 
-    pred.var = varname, 
-    train = camera_data_rf
-  )
-  pd <- pd %>% pivot_longer(cols = 1, names_to = "name", values_to = "value")
-  pd$name <- varname
-  return(pd)
-}) %>%
-  bind_rows()
-
-ggplot(df, aes(x = value, y = yhat)) +
-  geom_line(color = "steelblue") +
-  facet_wrap(~name, scales = "free_x") +
-  labs(x = "Variable Value", y = "Predicted Price", 
-       title = "Partial Dependence Plots for Important Variables") +
-  theme_bw(base_size = 13)
 ```

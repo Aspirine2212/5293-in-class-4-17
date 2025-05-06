@@ -1,1 +1,27 @@
-# Conclusion
+# Three Goals of the Project
+
+## Random Forest Result
+
+In this project, I compare the different types of factors of cameras (Such as Brand, Release Date, Max resolution, and so on...), to the camera price. As the proposal mentioned, I went deeper in the Random Forest, and utilize PDP plots, SHAP values, and feature importance to find the key factors. Based on the Random Forest model, we can tell that camera's brand and telephoto zoom are the most important factors to its price. It makes sense for the market since some camera factory like Leica, usually has higher average price than common Sony or Nikon camera.
+
+## Adjusting Seed Numbers and Test sets
+
+In the following test, I did the proposal goals, which is changing the splits of the training sets and testing sets. I selected 20%, 70% and 90% to see the feature importance difference. I found that the IncMSE% for each variable are lower in 20%, which makes sense since the training data set is very small. The splits in 70% and 90% shows no clear difference in each variables, and the brand and dimensions still are the most important factors to the camera price.
+
+With different seed numbers, we can tell the top related factors like Brand and Zoomtele show more contribution for the model. Some factors like MaxResolution and EffectivePixles show more contributions with less seeds. However, the order for the related factors still did not change, and we can say that seed number for the Random Forest model affect very little on the results.
+
+## Compare to Linear Regression
+
+The third goal of my project is to see the difference between Random Forest and Linear Regression. I made the feature importance plot again for both Random Forest and Linear Regression. I found that in Linear regression, the Brand shows much more importance than Random Forest. We can tell the top important features for Linear Regression are different types of brand, which matches our earlier conclusion that camera brand has the most significant effect towards its price.
+
+On the other hand, we can see the variable names for Linear Regression and Random Forest have difference. Linear Regression includes much more types of variables. Due to the effect of the top variables, the other related variables has little contribution towards the model, which makes us hard to judge camera's price based on the other related factors. The Random Forest has much more clear result and stable model, and I believe it is a better model for judging camera's price on this data set.
+
+# Challenges and Future Extensions
+
+I faced some trouble on coding the LIME plot for this data set. The training data set always faced some bugs with different dimensions and some columns with weird numeric values may cause other bugs in the plots.
+
+For the future indications, I can do more detailed EDA steps besides the correlation matrix and histograms for the data. I can also try other methods besides PCA to fill out the missing values.
+
+# Overall Conclusion
+
+Based on the results from Random Forest and Linear Regression, we can tell the camara brand has the most significant effect on camera's price. Other important factors include camera dimensions and telephoto zoom. Random Forest shows more robusted analysis to predict camera's price than Linear Regression.

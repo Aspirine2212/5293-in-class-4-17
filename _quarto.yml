@@ -1,12 +1,13 @@
 project:
   type: book
   output-dir: docs
-
+  
+  
 execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "Finding What are the Important Factors for Camera Price With Random Forest and Linear Regression"
   author:
     - Hanzhong Yang (hy2870)
   repo-url: https://github.com/Aspirine2212/5293-in-class-4-17
