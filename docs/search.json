@@ -2,7 +2,11 @@
   {
     "objectID": "index.html",
     "href": "index.html",
+<<<<<<< HEAD
     "title": "Finding What are the Important Factors for Camera Price With Random Forest and Linear Regression",
+=======
+    "title": "5293 Final Project",
+>>>>>>> b6c8899eb2c888d991917a0de1f7989cbbb7e2a2
     "section": "",
     "text": "1 Introduction\nMy project will explore the relationship between camera price and certain factors, such as brand, ISO, weight, resolution, etc.\nI want to create a machine learning model to predict the price of a camera when we know certain parameters about it, and select some of the most important factors that relate to the camera’s price. With several models here, I can use it to predict the price of the upcoming camera in the future.\nI have a raw data set coming from Kaggle, which includes the camera price and information. I will do a quick EDA to filter out the key information and handle some missing values.\nAfter that, I will go with “study the effect of changing parameters, changing training/test split, or something else about the interpretation method on some output.” My plan is to do random forest and linear regression. When I change certain variables in the model, will the result change or not? Will some of the factors be more related to the price in certain models?",
     "crumbs": [
@@ -14,6 +18,7 @@
     "href": "data.html",
     "title": "2  data",
     "section": "",
+<<<<<<< HEAD
     "text": "2.1 Description\nThis data set is related to camera. It includes certain features of the camera. There are 13 properties related to these camera, which are: Model, Release date, Max resolution, Low resolution, Effective pixels, Zoom wide (W), Zoom tele (T), Normal focus range, Macro focus range, Storage included Weight (inc. batteries), Dimensions, and Price.",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
@@ -37,14 +42,61 @@
     "text": "2.3 handling the year and brand\n\n\nCode\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(stringr)\n\n#getting the group for year\n#camera_data &lt;- camera_data |&gt;\n  #mutate(Year.Group = case_when(\n    #Release.date &gt;= 1994 & Release.date &lt;= 1997 ~ \"1994-1997\",\n    #Release.date &gt;= 1998 & Release.date &lt;= 2001 ~ \"1998-2001\",\n    #Release.date &gt;= 2002 & Release.date &lt;= 2005 ~ \"2002-2005\",\n    #Release.date &gt;= 2006 & Release.date &lt;= 2007 ~ \"2006-2007\"\n  #))\n\n\n#get the brand for each model\ncamera_data &lt;- camera_data |&gt;\n  mutate(brand = word(Model, 1))\n\ncamera_data |&gt;\n  count(brand, sort = TRUE)\n\n\n       brand   n\n1    Olympus 122\n2       Sony 116\n3      Canon 115\n4      Kodak 102\n5   Fujifilm  99\n6      Nikon  90\n7     Pentax  68\n8      Casio  63\n9  Panasonic  55\n10   Samsung  54\n11        HP  46\n12     Ricoh  26\n13   Toshiba  18\n14     Epson  15\n15   Kyocera  15\n16     Leica  11\n17     Sanyo   8\n18      Agfa   7\n19     Sigma   4\n20    Contax   2\n21       JVC   2\n\n\nCode\ncolnames(camera_data)\n\n\n [1] \"Model\"                   \"Release.date\"           \n [3] \"Max.resolution\"          \"Low.resolution\"         \n [5] \"Effective.pixels\"        \"Zoom.wide..W.\"          \n [7] \"Zoom.tele..T.\"           \"Normal.focus.range\"     \n [9] \"Macro.focus.range\"       \"Storage.included\"       \n[11] \"Weight..inc..batteries.\" \"Dimensions\"             \n[13] \"Price\"                   \"brand\"                  \n\n\nCode\ncamera_data &lt;- camera_data %&gt;%\n  rename_with(~ gsub(\"\\\\.\", \"\", .x)) %&gt;%\n  rename(\n    ReleaseDate = Releasedate,\n    MaxResolution = Maxresolution,\n    LowResolution = Lowresolution,\n    EffectivePixels = Effectivepixels,\n    ZoomWide = ZoomwideW,\n    ZoomTele = ZoomteleT,\n    NormalFocus = Normalfocusrange,\n    MacroFocus = Macrofocusrange,\n    Weight = Weightincbatteries,\n    Storage = Storageincluded,\n    Brand = brand\n  )",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+=======
+    "text": "3 Data",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+>>>>>>> b6c8899eb2c888d991917a0de1f7989cbbb7e2a2
     ]
   },
   {
     "objectID": "data.html#missing-value-analysis",
     "href": "data.html#missing-value-analysis",
     "title": "2  data",
+<<<<<<< HEAD
     "section": "2.4 Missing value analysis",
     "text": "2.4 Missing value analysis\nFind out how many missing values are there in the dataset.\n\n\n\nCode\nlibrary(dplyr)\n\nna_summary &lt;- camera_data |&gt;\n  summarise(across(everything(), ~sum(is.na(.)))) |&gt;\n  pivot_longer(everything(), names_to = \"variable\", values_to = \"na_count\") |&gt;\n  mutate(na_percent = round(na_count / nrow(camera_data) * 100, 2))\n\nna_summary\n\n\n# A tibble: 14 × 3\n   variable        na_count na_percent\n   &lt;chr&gt;              &lt;int&gt;      &lt;dbl&gt;\n 1 Model                  0       0   \n 2 ReleaseDate            0       0   \n 3 MaxResolution          0       0   \n 4 LowResolution          0       0   \n 5 EffectivePixels        0       0   \n 6 ZoomWide               0       0   \n 7 ZoomTele               0       0   \n 8 NormalFocus            0       0   \n 9 MacroFocus             1       0.1 \n10 Storage                2       0.19\n11 Weight                 2       0.19\n12 Dimensions             2       0.19\n13 Price                  0       0   \n14 Brand                  0       0",
+=======
+    "section": "3.4 Missing value analysis",
+    "text": "3.4 Missing value analysis\n\n\nCode\nlibrary(dplyr)\n\nna_summary &lt;- camera_data |&gt;\n  summarise(across(everything(), ~sum(is.na(.)))) |&gt;\n  pivot_longer(everything(), names_to = \"variable\", values_to = \"na_count\") |&gt;\n  mutate(na_percent = round(na_count / nrow(camera_data) * 100, 2))\n\nna_summary\n\n\n# A tibble: 15 × 3\n   variable        na_count na_percent\n   &lt;chr&gt;              &lt;int&gt;      &lt;dbl&gt;\n 1 Model                  0       0   \n 2 ReleaseDate            0       0   \n 3 MaxResolution          0       0   \n 4 LowResolution          0       0   \n 5 EffectivePixels        0       0   \n 6 ZoomWide               0       0   \n 7 ZoomTele               0       0   \n 8 NormalFocus            0       0   \n 9 MacroFocus             1       0.1 \n10 Storage                2       0.19\n11 Weight                 2       0.19\n12 Dimensions             2       0.19\n13 Price                  0       0   \n14 YearGroup              0       0   \n15 Brand                  0       0",
+>>>>>>> b6c8899eb2c888d991917a0de1f7989cbbb7e2a2
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+<<<<<<< HEAD
+    "objectID": "data.html#handling-missing-values",
+    "href": "data.html#handling-missing-values",
+    "title": "2  data",
+    "section": "2.5 Handling Missing Values",
+    "text": "2.5 Handling Missing Values\nUsing PCA to fill out the missing values.\n\n\nCode\nlibrary(missMDA)\nlibrary(FactoMineR)\n\nvars_for_imputation &lt;- camera_data %&gt;%\n  select(where(is.numeric)) %&gt;%\n  select(where(~ !all(is.na(.)))) %&gt;%\n  select(where(~ sd(., na.rm = TRUE) &gt; 0))\n\n# PCA\nnb_pc &lt;- estim_ncpPCA(vars_for_imputation, method = \"Regularized\")$ncp\nimputed_data &lt;- imputePCA(vars_for_imputation, ncp = nb_pc)\nfilled_data &lt;- imputed_data$completeObs\n\n\ncamera_data_filled &lt;- camera_data\ncamera_data_filled[names(vars_for_imputation)] &lt;- filled_data\n\n\nsum(is.na(camera_data_filled))\n\n\n[1] 0",
+=======
+    "objectID": "data.html#description",
+    "href": "data.html#description",
+    "title": "2  data",
+    "section": "3.1 Description",
+    "text": "3.1 Description\nThis data set is related to camera. It includes certain features of the camera. There are 13 properties related to these camera, which are: Model, Release date, Max resolution, Low resolution, Effective pixels, Zoom wide (W), Zoom tele (T), Normal focus range, Macro focus range, Storage included Weight (inc. batteries), and Dimensions Price.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#load-the-dataset",
+    "href": "data.html#load-the-dataset",
+    "title": "2  data",
+    "section": "3.2 load the dataset",
+    "text": "3.2 load the dataset\n\n\nCode\nlibrary(dplyr)\n\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\n\nCode\nlibrary(tidyr)\n\n\ncamera_data &lt;- read.csv(\"camera_dataset.csv\")\n\nquantitative_vars &lt;- camera_data[, c(\"Max.resolution\", \"Low.resolution\", \"Effective.pixels\", \n                                     \"Zoom.wide..W.\", \"Zoom.tele..T.\", \"Normal.focus.range\", \n                                     \"Weight..inc..batteries.\", \"Price\")]\n\nstats_summary &lt;- quantitative_vars |&gt;\n  summarise_all(list(\n    mean = ~mean(., na.rm = TRUE),\n    median = ~median(., na.rm = TRUE),\n    sd = ~sd(., na.rm = TRUE),\n    IQR = ~IQR(., na.rm = TRUE)\n  )) |&gt;\n  pivot_longer(\n    everything(),\n    names_to = c(\"variable\", \"stat\"),\n    names_sep = \"_\"\n  ) |&gt;\n  pivot_wider(\n    names_from = variable,\n    values_from = value\n  )\n\nstats_summary\n\n\n# A tibble: 4 × 9\n  stat   Max.resolution Low.resolution Effective.pixels Zoom.wide..W.\n  &lt;chr&gt;           &lt;dbl&gt;          &lt;dbl&gt;            &lt;dbl&gt;         &lt;dbl&gt;\n1 mean            2475.          1774.             4.60          33.0\n2 median          2560           2048              4             36  \n3 sd               760.           831.             2.84          10.3\n4 IQR             1024           1440              4              3  \n# ℹ 4 more variables: Zoom.tele..T. &lt;dbl&gt;, Normal.focus.range &lt;dbl&gt;,\n#   Weight..inc..batteries. &lt;dbl&gt;, Price &lt;dbl&gt;",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html#handling-the-year-and-brand",
+    "href": "data.html#handling-the-year-and-brand",
+    "title": "2  data",
+    "section": "3.3 handling the year and brand",
+    "text": "3.3 handling the year and brand\n\n\nCode\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(stringr)\n\n#getting the group for year\ncamera_data &lt;- camera_data |&gt;\n  mutate(Year.Group = case_when(\n    Release.date &gt;= 1994 & Release.date &lt;= 1997 ~ \"1994-1997\",\n    Release.date &gt;= 1998 & Release.date &lt;= 2001 ~ \"1998-2001\",\n    Release.date &gt;= 2002 & Release.date &lt;= 2005 ~ \"2002-2005\",\n    Release.date &gt;= 2006 & Release.date &lt;= 2007 ~ \"2006-2007\"\n  ))\n\n\n#get the brand for each model\ncamera_data &lt;- camera_data |&gt;\n  mutate(brand = word(Model, 1))\n\ncamera_data |&gt;\n  count(brand, sort = TRUE)\n\n\n       brand   n\n1    Olympus 122\n2       Sony 116\n3      Canon 115\n4      Kodak 102\n5   Fujifilm  99\n6      Nikon  90\n7     Pentax  68\n8      Casio  63\n9  Panasonic  55\n10   Samsung  54\n11        HP  46\n12     Ricoh  26\n13   Toshiba  18\n14     Epson  15\n15   Kyocera  15\n16     Leica  11\n17     Sanyo   8\n18      Agfa   7\n19     Sigma   4\n20    Contax   2\n21       JVC   2\n\n\nCode\ncamera_data &lt;- camera_data %&gt;%\n  rename_with(~ gsub(\"\\\\.\", \"\", .x)) %&gt;%\n  rename(\n    ReleaseDate = Releasedate,\n    MaxResolution = Maxresolution,\n    LowResolution = Lowresolution,\n    EffectivePixels = Effectivepixels,\n    ZoomWide = ZoomwideW,\n    ZoomTele = ZoomteleT,\n    NormalFocus = Normalfocusrange,\n    MacroFocus = Macrofocusrange,\n    Weight = Weightincbatteries,\n    Storage = Storageincluded,\n    YearGroup = YearGroup,\n    Brand = brand\n  )",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
     ]
@@ -53,8 +105,9 @@
     "objectID": "data.html#handling-missing-values",
     "href": "data.html#handling-missing-values",
     "title": "2  data",
-    "section": "2.5 Handling Missing Values",
-    "text": "2.5 Handling Missing Values\nUsing PCA to fill out the missing values.\n\n\nCode\nlibrary(missMDA)\nlibrary(FactoMineR)\n\nvars_for_imputation &lt;- camera_data %&gt;%\n  select(where(is.numeric)) %&gt;%\n  select(where(~ !all(is.na(.)))) %&gt;%\n  select(where(~ sd(., na.rm = TRUE) &gt; 0))\n\n# PCA\nnb_pc &lt;- estim_ncpPCA(vars_for_imputation, method = \"Regularized\")$ncp\nimputed_data &lt;- imputePCA(vars_for_imputation, ncp = nb_pc)\nfilled_data &lt;- imputed_data$completeObs\n\n\ncamera_data_filled &lt;- camera_data\ncamera_data_filled[names(vars_for_imputation)] &lt;- filled_data\n\n\nsum(is.na(camera_data_filled))\n\n\n[1] 0",
+    "section": "3.5 Handling Missing Values",
+    "text": "3.5 Handling Missing Values\n\n\nCode\nlibrary(missMDA)\nlibrary(FactoMineR)\n\nvars_for_imputation &lt;- camera_data %&gt;%\n  select(where(is.numeric)) %&gt;%\n  select(where(~ !all(is.na(.)))) %&gt;%\n  select(where(~ sd(., na.rm = TRUE) &gt; 0))\n\n# PCA\nnb_pc &lt;- estim_ncpPCA(vars_for_imputation, method = \"Regularized\")$ncp\nimputed_data &lt;- imputePCA(vars_for_imputation, ncp = nb_pc)\nfilled_data &lt;- imputed_data$completeObs\n\n\ncamera_data_filled &lt;- camera_data\ncamera_data_filled[names(vars_for_imputation)] &lt;- filled_data\n\n\nsum(is.na(camera_data_filled))\n\n\n[1] 0",
+>>>>>>> b6c8899eb2c888d991917a0de1f7989cbbb7e2a2
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
     ]
@@ -63,6 +116,7 @@
     "objectID": "data.html#basic-information",
     "href": "data.html#basic-information",
     "title": "2  data",
+<<<<<<< HEAD
     "section": "2.6 Basic information",
     "text": "2.6 Basic information\nHere are the basic information for the cleaned data frame.\n\n\nCode\nlibrary(dplyr)\n\nbasic_stats &lt;- camera_data_filled %&gt;%\n  select(where(is.numeric)) %&gt;%\n  summarise(across(everything(), list(\n    mean = ~mean(., na.rm = TRUE),\n    sd = ~sd(., na.rm = TRUE),\n    median = ~median(., na.rm = TRUE),\n    min = ~min(., na.rm = TRUE),\n    max = ~max(., na.rm = TRUE)\n  ), .names = \"{.col}_{.fn}\"))\n\nbasic_stats_tidy &lt;- basic_stats %&gt;%\n  pivot_longer(everything(), names_to = c(\"variable\", \".value\"), names_sep = \"_\")\n\nbasic_stats_tidy\n\n\n# A tibble: 12 × 6\n   variable           mean     sd median   min   max\n   &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n 1 ReleaseDate     2004.     2.72  2004   1994  2007\n 2 MaxResolution   2475.   760.    2560      0  5616\n 3 LowResolution   1774.   831.    2048      0  4992\n 4 EffectivePixels    4.60   2.84     4      0    21\n 5 ZoomWide          33.0   10.3     36      0    52\n 6 ZoomTele         122.    93.5    108      0   518\n 7 NormalFocus       44.1   24.1     50      0   120\n 8 MacroFocus         7.79   8.10     6      0    85\n 9 Storage           17.5   27.4     16      0   450\n10 Weight           319.   260.     226.     0  1860\n11 Dimensions       105.    24.2    101      0   240\n12 Price            457.   760.     199     14  7999\n\n\nCode\nsaveRDS(camera_data_filled, file = \"camera_data_clean.rds\")",
     "crumbs": [
@@ -95,6 +149,10 @@
     "title": "2  data",
     "section": "2.9 Histograms",
     "text": "2.9 Histograms\nSelecting out the ditributions for certain factors.\n\n\n\nCode\nlibrary(ggplot2)\nlibrary(tidyr)\n\ncamera_data_filled %&gt;%\n  select(Price, EffectivePixels, MaxResolution, Weight) %&gt;%\n  pivot_longer(cols = everything(), names_to = \"variable\", values_to = \"value\") %&gt;%\n  ggplot(aes(x = value)) +\n  geom_histogram(bins = 30, fill = \"steelblue\", color = \"white\") +\n  facet_wrap(~ variable, scales = \"free\") +\n  labs(title = \"Histograms of Key Numerical Variables\", x = NULL, y = \"Count\")",
+=======
+    "section": "3.6 Basic information",
+    "text": "3.6 Basic information\n\n\nCode\nlibrary(dplyr)\n\nbasic_stats &lt;- camera_data_filled %&gt;%\n  select(where(is.numeric)) %&gt;%\n  summarise(across(everything(), list(\n    mean = ~mean(., na.rm = TRUE),\n    sd = ~sd(., na.rm = TRUE),\n    median = ~median(., na.rm = TRUE),\n    min = ~min(., na.rm = TRUE),\n    max = ~max(., na.rm = TRUE)\n  ), .names = \"{.col}_{.fn}\"))\n\nbasic_stats_tidy &lt;- basic_stats %&gt;%\n  pivot_longer(everything(), names_to = c(\"variable\", \".value\"), names_sep = \"_\")\n\nbasic_stats_tidy\n\n\n# A tibble: 12 × 6\n   variable           mean     sd median   min   max\n   &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n 1 ReleaseDate     2004.     2.72  2004   1994  2007\n 2 MaxResolution   2475.   760.    2560      0  5616\n 3 LowResolution   1774.   831.    2048      0  4992\n 4 EffectivePixels    4.60   2.84     4      0    21\n 5 ZoomWide          33.0   10.3     36      0    52\n 6 ZoomTele         122.    93.5    108      0   518\n 7 NormalFocus       44.1   24.1     50      0   120\n 8 MacroFocus         7.79   8.10     6      0    85\n 9 Storage           17.5   27.4     16      0   450\n10 Weight           319.   260.     226.     0  1860\n11 Dimensions       105.    24.2    101      0   240\n12 Price            457.   760.     199     14  7999\n\n\n##random Forest\n\n\nCode\nlibrary(randomForest)\n\n\nrandomForest 4.7-1.2\n\n\nType rfNews() to see new features/changes/bug fixes.\n\n\n\nAttaching package: 'randomForest'\n\n\nThe following object is masked from 'package:ggplot2':\n\n    margin\n\n\nThe following object is masked from 'package:dplyr':\n\n    combine\n\n\nCode\n# 去掉 Model 列\ncamera_data_rf &lt;- camera_data_filled %&gt;%\n  select(-Model)\n\n# 构建模型\nset.seed(123)\nrf_model &lt;- randomForest(Price ~ ., data = camera_data_rf, importance = TRUE)\n\n# 提取变量重要性\nimportance_df &lt;- importance(rf_model) %&gt;%\n  as.data.frame() %&gt;%\n  tibble::rownames_to_column(\"Variable\")\n\n# 画图\nlibrary(ggplot2)\nggplot(importance_df, aes(x = reorder(Variable, `%IncMSE`), y = `%IncMSE`)) +\n  geom_col(fill = \"steelblue\") +\n  coord_flip() +\n  labs(title = \"Variable Importance from Random Forest (Model Excluded)\",\n       x = \"Variable\", y = \"% Increase in MSE\") +\n  theme_minimal()\n\n\n\n\n\n\n\n\n\nCode\n#colnames(camera_data_rf)\n\n\n##PDP plot single\n\n\nCode\nlibrary(randomForest)\nlibrary(iml)\nlibrary(ggplot2)\n\nX &lt;- camera_data_rf[, setdiff(names(camera_data_rf), \"Price\")]\npredictor &lt;- Predictor$new(rf_model, data = X, y = camera_data_rf$Price)\n\n\npdp_zoom &lt;- FeatureEffect$new(predictor, feature = \"ZoomTele\", method = \"pdp\")\n\n\nplot(pdp_zoom) +\n  labs(\n    title = \"Partial Dependence Plot: ZoomTele vs Price\",\n    x = \"Zoom Telephoto Range\",\n    y = \"Predicted Price\"\n  ) +\n  theme_minimal(base_size = 13)\n\n\n\n\n\n\n\n\n\nCode\npdp::partial(rf_model, pred.var = \"LowResolution\", train = camera_data_rf) %&gt;% head()\n\n\n  LowResolution     yhat\n1          0.00 443.9874\n2         99.84 440.8958\n3        199.68 443.3180\n4        299.52 443.8939\n5        399.36 444.3494\n6        499.20 442.5952\n\n\n##PDP plot all\n\n\nCode\nlibrary(pdp)\nlibrary(ggplot2)\nlibrary(purrr)\n\n\n\nAttaching package: 'purrr'\n\n\nThe following object is masked from 'package:pdp':\n\n    partial\n\n\nCode\nlibrary(dplyr)\n\n#camera_data_rf %&gt;% summarise(across(all_of(vars), ~n_distinct(.)))\n\nvars &lt;- c(\"ZoomTele\", \"Weight\", \"LowResolution\", \"MaxResolution\", \"Dimensions\", \"ReleaseDate\", \"ZoomWide\", \"EffectivePixels\", \"MacroFocus\", \"NormalFocus\")\n\ndf &lt;- map(vars, function(varname) {\n  pd &lt;- pdp::partial(\n    object = rf_model, \n    pred.var = varname, \n    train = camera_data_rf\n  )\n  pd &lt;- pd %&gt;% pivot_longer(cols = 1, names_to = \"name\", values_to = \"value\")\n  pd$name &lt;- varname\n  return(pd)\n}) %&gt;%\n  bind_rows()\n\nggplot(df, aes(x = value, y = yhat)) +\n  geom_line(color = \"steelblue\") +\n  facet_wrap(~name, scales = \"free_x\") +\n  labs(x = \"Variable Value\", y = \"Predicted Price\", \n       title = \"Partial Dependence Plots for Important Variables\") +\n  theme_bw(base_size = 13)",
+>>>>>>> b6c8899eb2c888d991917a0de1f7989cbbb7e2a2
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>data</span>"
     ]
@@ -102,6 +160,7 @@
   {
     "objectID": "results.html",
     "href": "results.html",
+<<<<<<< HEAD
     "title": "3  Result",
     "section": "",
     "text": "3.1 Random Forest\nUsing Random Forest to find out the feature importance and graph it.\nCode\nlibrary(randomForest)\nlibrary(iml)\n\ncamera_data_rf &lt;- camera_data_filled %&gt;% select(-Model)\n\n\nset.seed(123)\nn &lt;- nrow(camera_data_rf)\ntrain_index &lt;- sample(n, size = floor(0.7 * n))\ntrain_data &lt;- camera_data_rf[train_index, ]\ntest_data &lt;- camera_data_rf[-train_index, ]\n\n\ntrain_data$Brand &lt;- as.factor(train_data$Brand)\ntest_data$Brand &lt;- as.factor(test_data$Brand)\n\n\nrf_model &lt;- randomForest(Price ~ ., data = train_data, importance = TRUE)\n\n\nimportance_df &lt;- importance(rf_model) %&gt;%\n  as.data.frame() %&gt;%\n  tibble::rownames_to_column(\"Variable\")\n\n#library(jsonlite)\n#write_json(importance_df, \"scripts/importance_data.json\", pretty = TRUE)",
@@ -287,6 +346,13 @@
     "text": "5.3 Compare to Linear Regression\nThe third goal of my project is to see the difference between Random Forest and Linear Regression. I made the feature importance plot again for both Random Forest and Linear Regression. I found that in Linear regression, the Brand shows much more importance than Random Forest. We can tell the top important features for Linear Regression are different types of brand, which matches our earlier conclusion that camera brand has the most significant effect towards its price.\nOn the other hand, we can see the variable names for Linear Regression and Random Forest have difference. Linear Regression includes much more types of variables. Due to the effect of the top variables, the other related variables has little contribution towards the model, which makes us hard to judge camera’s price based on the other related factors. The Random Forest has much more clear result and stable model, and I believe it is a better model for judging camera’s price on this data set.",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Three Goals of the Project</span>"
+=======
+    "title": "3  Results",
+    "section": "",
+    "text": "##First Result This is the first result",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Results</span>"
+>>>>>>> b6c8899eb2c888d991917a0de1f7989cbbb7e2a2
     ]
   }
 ]
