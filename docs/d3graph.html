@@ -185,42 +185,42 @@ ul.task-list li input[type="checkbox"] {
 <section id="variable-importance-from-random-forest" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="variable-importance-from-random-forest"><span class="header-section-number">4.1</span> Variable Importance from Random Forest</h2>
 <p>This bar chart displays the variable importance (%IncMSE) from the random forest model. <strong>Brand</strong> and <strong>ZoomTele</strong> emerge as the most influential features. The importance values reflect how much model error increases when a variable is permuted, with higher bars representing more critical features.<br>
-<img src="docs/results_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="RF Feature Importance"></p>
+<img src="results_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Feature importance"></p>
 </section>
 <section id="partial-dependence-plot-for-zoomtele" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="partial-dependence-plot-for-zoomtele"><span class="header-section-number">4.2</span> Partial Dependence Plot for ZoomTele</h2>
 <p>This partial dependence plot shows the marginal effect of <strong>ZoomTele</strong> on predicted price. At low values (especially under 50), ZoomTele has a strong positive impact on price. If the level go beyond that, the effect plateaus, suggesting diminishing returns at higher zoom levels.<br>
-<img src="docs/results_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Single PDP"></p>
+<img src="results_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Single PDP"></p>
 </section>
 <section id="partial-dependence-plots-for-important-variables" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="partial-dependence-plots-for-important-variables"><span class="header-section-number">4.3</span> Partial Dependence Plots for Important Variables</h2>
 <p>This panel of PDPs illustrates how each key variable influences the predicted price: - <strong>EffectivePixels</strong> and <strong>MaxResolution</strong> exhibit a sharp positive effect after a threshold; - <strong>ReleaseDate</strong> has a negative effect on <strong>Price</strong> - <strong>Weight</strong> demonstrates a non-linear trend with an inflection point.</p>
 <p>These plots reveal individual feature effects on the model output.<br>
-<img src="docs/results_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="All PDP"></p>
+<img src="results_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="All PDP"></p>
 </section>
 <section id="d-partial-dependence-plot-zoomtele-vs.-effectivepixels" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="d-partial-dependence-plot-zoomtele-vs.-effectivepixels"><span class="header-section-number">4.4</span> 2D Partial Dependence Plot – ZoomTele vs.&nbsp;EffectivePixels</h2>
 <p>This bivariate PDP visualizes the interaction between <strong>ZoomTele</strong> and <strong>EffectivePixels</strong>. The top-left corner (low values for both) shows the highest predicted prices, whereas most of the grid reflects lower predictions. This suggests a strong interaction between the two variables in shaping model predictions.<br>
-<img src="docs/results_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="2D Partial Dependence"></p>
+<img src="results_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="2D Partial Dependence"></p>
 </section>
 <section id="shap-values-for-the-first-test-observation" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="shap-values-for-the-first-test-observation"><span class="header-section-number">4.5</span> SHAP Values for the First Test Observation</h2>
 <p>This SHAP summary plot explains the contribution of each feature to the prediction for the first test observation. <strong>Brand</strong>, <strong>MacroFocus</strong>, and <strong>ReleaseDate</strong> contributed positively, while <strong>ZoomTele</strong> had a large negative impact. SHAP values provide local interpretation and highlight which features drive individual predictions.<br>
-<img src="docs/results_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="SHAP"></p>
+<img src="results_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="SHAP"></p>
 </section>
 <section id="variable-importance-stability-under-different-traintest-splits" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="variable-importance-stability-under-different-traintest-splits"><span class="header-section-number">4.6</span> Variable Importance Stability Under Different Train/Test Splits</h2>
 <p>This plot shows how variable importance changes across different train/test splits (20%, 70%, 90%). Features like <strong>Brand</strong> and <strong>Dimensions</strong> remain consistently important, while others like <strong>Storage</strong> and <strong>ZoomWide</strong> show greater variability, suggesting model sensitivity to training data allocation.<br>
-<img src="docs/results_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Different Train/Test Splits"></p>
+<img src="results_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Different Train/Test Splits"></p>
 </section>
 <section id="variable-importance-stability-across-seeds" class="level2" data-number="4.7">
 <h2 data-number="4.7" class="anchored" data-anchor-id="variable-importance-stability-across-seeds"><span class="header-section-number">4.7</span> Variable Importance Stability Across Seeds</h2>
 <p>The heat map presents variable importance values across different random seeds. Features like <strong>Brand</strong> and <strong>ZoomTele</strong> remain consistently important, demonstrating robustness, whereas <strong>MacroFocus</strong> and <strong>Storage</strong> exhibit more fluctuation between seeds, indicating potential model instability.<br>
-<img src="docs/results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Across Seeds"></p>
+<img src="results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Across Seeds"></p>
 </section>
 <section id="linear-regression-vs-random-forest" class="level2" data-number="4.8">
 <h2 data-number="4.8" class="anchored" data-anchor-id="linear-regression-vs-random-forest"><span class="header-section-number">4.8</span> Linear Regression vs Random Forest</h2>
-<p>This comparative chart illustrates feature importance across linear regression and random forest models. While linear regression heavily weights brand dummy variables (e.g., Brand Kodak, Brand Leica), random forest assigns more importance to continuous features like <strong>EffectivePixels</strong>, <strong>ZoomTele</strong>, and <strong>Brand</strong>. This highlights the non-linear model’s ability to capture complex feature interactions. <img src="docs/results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Linear Regression"></p>
+<p>This comparative chart illustrates feature importance across linear regression and random forest models. While linear regression heavily weights brand dummy variables (e.g., Brand Kodak, Brand Leica), random forest assigns more importance to continuous features like <strong>EffectivePixels</strong>, <strong>ZoomTele</strong>, and <strong>Brand</strong>. This highlights the non-linear model’s ability to capture complex feature interactions. <img src="results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center" style="width:70.0%" alt="Linear Regression"></p>
 
 
 </section>
